@@ -1,0 +1,40 @@
+{
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\begin{tabular}{l*{3}{c}}
+\hline\hline
+            &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}&\multicolumn{1}{c}{(3)}\\
+            &\multicolumn{1}{c}{pog20s}&\multicolumn{1}{c}{pcNSDAP285}&\multicolumn{1}{c}{clubs\_all\_pc}\\
+\hline
+ATET        &                     &                     &                     \\
+r1vs0.pog1349&       0.175         &       1.759\sym{**} &      -0.873         \\
+            &         (.)         &      (2.95)         &     (-0.41)         \\
+\hline
+POmean      &                     &                     &                     \\
+0.pog1349   &    2.28e-25         &       2.386\sym{***}&       3.153         \\
+            &         (.)         &      (6.96)         &      (1.47)         \\
+\hline
+TME1        &                     &                     &                     \\
+lnpop       &       0.393         &       0.445         &       0.445         \\
+            &         (.)         &      (1.16)         &      (1.16)         \\
+[1em]
+share\_cath25&       3.340         &       3.309\sym{**} &       3.309\sym{**} \\
+            &         (.)         &      (3.02)         &      (3.02)         \\
+[1em]
+bcollar25   &      -1.547         &      -1.608         &      -1.608         \\
+            &         (.)         &     (-0.20)         &     (-0.20)         \\
+[1em]
+latitude    &      -0.582         &      -0.632\sym{*}  &      -0.632\sym{*}  \\
+            &         (.)         &     (-2.06)         &     (-2.06)         \\
+[1em]
+longitude   &      -0.143         &      -0.160         &      -0.160         \\
+            &         (.)         &     (-0.70)         &     (-0.70)         \\
+[1em]
+\_cons      &       28.68         &       30.84         &       30.84         \\
+            &         (.)         &      (1.74)         &      (1.74)         \\
+\hline
+\(N\)       &          91         &          92         &          92         \\
+\hline\hline
+\multicolumn{4}{l}{\footnotesize \textit{t} statistics in parentheses}\\
+\multicolumn{4}{l}{\footnotesize \sym{*} \(p<0.05\), \sym{**} \(p<0.01\), \sym{***} \(p<0.001\)}\\
+\end{tabular}
+}

@@ -1,0 +1,2550 @@
+-----------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\franc\OneDrive\Escritorio\registros UC\Econometric_T3\Table2_results.log
+  log type:  text
+ opened on:   1 Jun 2023, 16:46:46
+
+. cap prog drop breaks
+
+. prog breaks
+  1.   args var
+  2.         cap drop break 
+  3.         cap drop sig 
+  4.         cap drop fstat 
+  5.         cap drop maxf
+  6.         
+. gen sig=.
+  7. gen fstat=.
+  8. tsset year
+  9. 
+. *test break
+. local i=33
+ 10. while `i'<=42 {
+ 11. cap drop y19`i' 
+ 12. qui gen y19`i'=(year>=19`i')
+ 13. qui newey d.`var' y19`i', lag(2)
+ 14. qui replace fstat=e(F) if year==19`i'
+ 15. qui test y19`i' 
+ 16. qui replace sig=r(p) if year==19`i'
+ 17. local i=`i' +1
+ 18. }
+ 19. qui egen maxf=max(fstat) 
+ 20. qui gen break=year if fstat==maxf
+ 21. list `var' year break fstat sig if break!=.
+ 22. 
+. end
+
+. 
+end of do-file
+
+. do "C:\Users\franc\AppData\Local\Temp\STD3e8_000000.tmp"
+
+. breaks logall_tot
+(31 missing values generated)
+(31 missing values generated)
+
+Time variable: year, 1920 to 1950
+        Delta: 1 unit
+
+     +-----------------------------------------------+
+     | logall~t   year   break      fstat        sig |
+     |-----------------------------------------------|
+ 18. | 7.066381   1937    1937   2.970842   .0958048 |
+     +-----------------------------------------------+
+
+. 
+end of do-file
+
+. eststo
+(est1 stored)
+
+. esttab
+
+----------------------------
+                      (1)   
+             D.logall_tot   
+----------------------------
+y1942            -0.00688   
+                  (-0.85)   
+
+_cons             -0.0155*  
+                  (-2.29)   
+----------------------------
+N                      30   
+----------------------------
+t statistics in parentheses
+* p<0.05, ** p<0.01, *** p<0.001
+
+. do "C:\Users\franc\AppData\Local\Temp\STD3e8_000000.tmp"
+
+. breaks logall_tot
+(31 missing values generated)
+(31 missing values generated)
+
+Time variable: year, 1920 to 1950
+        Delta: 1 unit
+
+     +-----------------------------------------------+
+     | logall~t   year   break      fstat        sig |
+     |-----------------------------------------------|
+ 18. | 7.066381   1937    1937   2.970842   .0958048 |
+     +-----------------------------------------------+
+
+. breaks logmmr
+(31 missing values generated)
+(31 missing values generated)
+
+Time variable: year, 1920 to 1950
+        Delta: 1 unit
+
+     +-----------------------------------------------+
+     |   logmmr   year   break      fstat        sig |
+     |-----------------------------------------------|
+ 18. | 6.167865   1937    1937   29.22889   9.14e-06 |
+     +-----------------------------------------------+
+
+. breaks loginpn
+(31 missing values generated)
+(31 missing values generated)
+
+Time variable: year, 1920 to 1950
+        Delta: 1 unit
+
+     +-----------------------------------------------+
+     |  loginpn   year   break      fstat        sig |
+     |-----------------------------------------------|
+ 19. | 4.406719   1938    1938   3.086458   .0898787 |
+     +-----------------------------------------------+
+
+. breaks logscar
+(31 missing values generated)
+(31 missing values generated)
+
+Time variable: year, 1920 to 1950
+        Delta: 1 unit
+
+     +-----------------------------------------------+
+     |  logscar   year   break      fstat        sig |
+     |-----------------------------------------------|
+ 18. | .3075386   1937    1937   17.34298   .0002699 |
+     +-----------------------------------------------+
+
+. breaks logtuber
+(31 missing values generated)
+(31 missing values generated)
+
+Time variable: year, 1920 to 1950
+        Delta: 1 unit
+
+     +----------------------------------------------+
+     | logtuber   year   break     fstat        sig |
+     |----------------------------------------------|
+ 23. | 3.751854   1942    1942   1.64206   .2105539 |
+     +----------------------------------------------+
+
+. 
+end of do-file
+
+. do "C:\Users\franc\AppData\Local\Temp\STD3e8_000000.tmp"
+
+. sort year
+
+. gen post1937 = 0
+
+. replace post1937 = 1 if year > 1936
+(14 real changes made)
+
+. gen year1937 = year - 1937
+
+. gen yearpost1937 = year1937*post1937
+
+. 
+. newey logall_tot year1937 post1937 if year < 1944 & year > 1924 , lag(2)
+
+Regression with Newey–West standard errors      Number of obs     =         19
+Maximum lag = 2                                 F(  2,        16) =      82.72
+                                                Prob > F          =     0.0000
+
+------------------------------------------------------------------------------
+             |             Newey–West
+  logall_tot | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    year1937 |  -.0139341   .0021848    -6.38   0.000    -.0185656   -.0093027
+    post1937 |  -.0244115    .022994    -1.06   0.304    -.0731566    .0243336
+       _cons |   7.035244   .0183922   382.51   0.000     6.996254    7.074233
+------------------------------------------------------------------------------
+
+. newey logall_tot year1937 post1937 yearpost1937  if year < 1944 & year > 1924 , lag(2)
+
+Regression with Newey–West standard errors      Number of obs     =         19
+Maximum lag = 2                                 F(  3,        15) =     116.28
+                                                Prob > F          =     0.0000
+
+------------------------------------------------------------------------------
+             |             Newey–West
+  logall_tot | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    year1937 |  -.0120136   .0023911    -5.02   0.000    -.0171101    -.006917
+    post1937 |  -.0074691   .0192747    -0.39   0.704     -.048552    .0336139
+yearpost1937 |  -.0117293   .0047399    -2.47   0.026    -.0218321   -.0016266
+       _cons |   7.047727   .0206481   341.33   0.000     7.003717    7.091738
+------------------------------------------------------------------------------
+
+. 
+. newey logtuber year1937 post1937 if year < 1944 & year > 1924 , lag(2)
+
+Regression with Newey–West standard errors      Number of obs     =         19
+Maximum lag = 2                                 F(  2,        16) =     725.95
+                                                Prob > F          =     0.0000
+
+------------------------------------------------------------------------------
+             |             Newey–West
+    logtuber | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    year1937 |  -.0469082   .0021239   -22.09   0.000    -.0514106   -.0424058
+    post1937 |   .0151428   .0251161     0.60   0.555    -.0381009    .0683866
+       _cons |   3.963395   .0183798   215.64   0.000     3.924432    4.002359
+------------------------------------------------------------------------------
+
+. newey logtuber year1937 post1937 yearpost1937  if year < 1944 & year > 1924 , lag(2)
+
+Regression with Newey–West standard errors      Number of obs     =         19
+Maximum lag = 2                                 F(  3,        15) =     656.77
+                                                Prob > F          =     0.0000
+
+------------------------------------------------------------------------------
+             |             Newey–West
+    logtuber | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    year1937 |  -.0478987   .0025377   -18.87   0.000    -.0533077   -.0424897
+    post1937 |   .0064055    .021909     0.29   0.774    -.0402925    .0531035
+yearpost1937 |   .0060489   .0058941     1.03   0.321     -.006514    .0186119
+       _cons |   3.956957   .0201615   196.26   0.000     3.913984    3.999931
+------------------------------------------------------------------------------
+
+. 
+. newey logmmr year1937 post1937 if year < 1944 & year > 1924 , lag(2)
+
+Regression with Newey–West standard errors      Number of obs     =         19
+Maximum lag = 2                                 F(  2,        16) =      18.49
+                                                Prob > F          =     0.0001
+
+------------------------------------------------------------------------------
+             |             Newey–West
+      logmmr | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    year1937 |  -.0364238   .0134091    -2.72   0.015    -.0648497   -.0079978
+    post1937 |  -.3038777   .1391409    -2.18   0.044    -.5988432   -.0089122
+       _cons |   6.223148   .0777931    80.00   0.000     6.058234    6.388062
+------------------------------------------------------------------------------
+
+. newey logmmr year1937 post1937 yearpost1937  if year < 1944 & year > 1924 , lag(2)
+
+Regression with Newey–West standard errors      Number of obs     =         19
+Maximum lag = 2                                 F(  3,        15) =     344.57
+                                                Prob > F          =     0.0000
+
+------------------------------------------------------------------------------
+             |             Newey–West
+      logmmr | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    year1937 |  -.0187822   .0042659    -4.40   0.001    -.0278748   -.0096897
+    post1937 |  -.1482542   .0321902    -4.61   0.000     -.216866   -.0796423
+yearpost1937 |  -.1077394   .0086085   -12.52   0.000    -.1260879   -.0893909
+       _cons |   6.337818   .0263424   240.59   0.000      6.28167    6.393965
+------------------------------------------------------------------------------
+
+. 
+. newey loginpn year1937 post1937 if year < 1944 & year > 1924 , lag(2)
+
+Regression with Newey–West standard errors      Number of obs     =         19
+Maximum lag = 2                                 F(  2,        16) =      20.71
+                                                Prob > F          =     0.0000
+
+------------------------------------------------------------------------------
+             |             Newey–West
+     loginpn | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    year1937 |  -.0366985   .0110597    -3.32   0.004    -.0601441   -.0132529
+    post1937 |  -.1631481   .1223156    -1.33   0.201    -.4224457    .0961495
+       _cons |   4.556755   .0767782    59.35   0.000     4.393992    4.719517
+------------------------------------------------------------------------------
+
+. newey loginpn year1937 post1937 yearpost1937  if year < 1944 & year > 1924 , lag(2)
+
+Regression with Newey–West standard errors      Number of obs     =         19
+Maximum lag = 2                                 F(  3,        15) =      52.66
+                                                Prob > F          =     0.0000
+
+------------------------------------------------------------------------------
+             |             Newey–West
+     loginpn | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    year1937 |   -.022394   .0087436    -2.56   0.022    -.0410305   -.0037574
+    post1937 |  -.0369619   .0759155    -0.49   0.633    -.1987719    .1248481
+yearpost1937 |  -.0873597   .0262485    -3.33   0.005     -.143307   -.0314124
+       _cons |   4.649734    .072021    64.56   0.000     4.496225    4.803243
+------------------------------------------------------------------------------
+
+. 
+. newey logscar year1937 post1937 if year < 1944 & year > 1924 , lag(2)
+
+Regression with Newey–West standard errors      Number of obs     =         19
+Maximum lag = 2                                 F(  2,        16) =      13.11
+                                                Prob > F          =     0.0004
+
+------------------------------------------------------------------------------
+             |             Newey–West
+     logscar | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    year1937 |  -.0394315   .0274522    -1.44   0.170    -.0976276    .0187646
+    post1937 |  -.8617873   .3643122    -2.37   0.031    -1.634095   -.0894799
+       _cons |   .3630699   .1872068     1.94   0.070    -.0337908    .7599307
+------------------------------------------------------------------------------
+
+. newey logscar year1937 post1937 yearpost1937  if year < 1944 & year > 1924 , lag(2)
+
+Regression with Newey–West standard errors      Number of obs     =         19
+Maximum lag = 2                                 F(  3,        15) =     131.08
+                                                Prob > F          =     0.0000
+
+------------------------------------------------------------------------------
+             |             Newey–West
+     logscar | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    year1937 |   .0021317   .0068132     0.31   0.759    -.0123904    .0166538
+    post1937 |  -.4951408   .1035522    -4.78   0.000     -.715857   -.2744246
+yearpost1937 |  -.2538322   .0334039    -7.60   0.000    -.3250309   -.1826335
+       _cons |   .6332305   .0294109    21.53   0.000     .5705426    .6959184
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\franc\AppData\Local\Temp\STD3e8_000000.tmp"
+
+. newey logall_tot year1937 post1937 if year < 1944 & year > 1924 , lag(2)
+
+Regression with Newey–West standard errors      Number of obs     =         19
+Maximum lag = 2                                 F(  2,        16) =      82.72
+                                                Prob > F          =     0.0000
+
+------------------------------------------------------------------------------
+             |             Newey–West
+  logall_tot | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    year1937 |  -.0139341   .0021848    -6.38   0.000    -.0185656   -.0093027
+    post1937 |  -.0244115    .022994    -1.06   0.304    -.0731566    .0243336
+       _cons |   7.035244   .0183922   382.51   0.000     6.996254    7.074233
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. eststo clear
+
+. eststo
+(est1 stored)
+
+. esttab
+
+----------------------------
+                      (1)   
+               logall_tot   
+----------------------------
+year1937          -0.0139***
+                  (-6.38)   
+
+post1937          -0.0244   
+                  (-1.06)   
+
+_cons               7.035***
+                 (382.51)   
+----------------------------
+N                      19   
+----------------------------
+t statistics in parentheses
+* p<0.05, ** p<0.01, *** p<0.001
+
+. do "C:\Users\franc\AppData\Local\Temp\STD3e8_000000.tmp"
+
+. newey logall_tot year1937 post1937 yearpost1937  if year < 1944 & year > 1924 , lag(2)
+
+Regression with Newey–West standard errors      Number of obs     =         19
+Maximum lag = 2                                 F(  3,        15) =     116.28
+                                                Prob > F          =     0.0000
+
+------------------------------------------------------------------------------
+             |             Newey–West
+  logall_tot | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    year1937 |  -.0120136   .0023911    -5.02   0.000    -.0171101    -.006917
+    post1937 |  -.0074691   .0192747    -0.39   0.704     -.048552    .0336139
+yearpost1937 |  -.0117293   .0047399    -2.47   0.026    -.0218321   -.0016266
+       _cons |   7.047727   .0206481   341.33   0.000     7.003717    7.091738
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. eststo
+(est2 stored)
+
+. esttab
+
+--------------------------------------------
+                      (1)             (2)   
+               logall_tot      logall_tot   
+--------------------------------------------
+year1937          -0.0139***      -0.0120***
+                  (-6.38)         (-5.02)   
+
+post1937          -0.0244        -0.00747   
+                  (-1.06)         (-0.39)   
+
+yearpost1937                      -0.0117*  
+                                  (-2.47)   
+
+_cons               7.035***        7.048***
+                 (382.51)        (341.33)   
+--------------------------------------------
+N                      19              19   
+--------------------------------------------
+t statistics in parentheses
+* p<0.05, ** p<0.01, *** p<0.001
+
+. do "C:\Users\franc\AppData\Local\Temp\STD3e8_000000.tmp"
+
+. newey logtuber year1937 post1937 if year < 1944 & year > 1924 , lag(2)
+
+Regression with Newey–West standard errors      Number of obs     =         19
+Maximum lag = 2                                 F(  2,        16) =     725.95
+                                                Prob > F          =     0.0000
+
+------------------------------------------------------------------------------
+             |             Newey–West
+    logtuber | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    year1937 |  -.0469082   .0021239   -22.09   0.000    -.0514106   -.0424058
+    post1937 |   .0151428   .0251161     0.60   0.555    -.0381009    .0683866
+       _cons |   3.963395   .0183798   215.64   0.000     3.924432    4.002359
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. eststo
+(est3 stored)
+
+. esttab
+
+------------------------------------------------------------
+                      (1)             (2)             (3)   
+               logall_tot      logall_tot        logtuber   
+------------------------------------------------------------
+year1937          -0.0139***      -0.0120***      -0.0469***
+                  (-6.38)         (-5.02)        (-22.09)   
+
+post1937          -0.0244        -0.00747          0.0151   
+                  (-1.06)         (-0.39)          (0.60)   
+
+yearpost1937                      -0.0117*                  
+                                  (-2.47)                   
+
+_cons               7.035***        7.048***        3.963***
+                 (382.51)        (341.33)        (215.64)   
+------------------------------------------------------------
+N                      19              19              19   
+------------------------------------------------------------
+t statistics in parentheses
+* p<0.05, ** p<0.01, *** p<0.001
+
+. do "C:\Users\franc\AppData\Local\Temp\STD3e8_000000.tmp"
+
+. newey logtuber year1937 post1937 yearpost1937  if year < 1944 & year > 1924 , lag(2)
+
+Regression with Newey–West standard errors      Number of obs     =         19
+Maximum lag = 2                                 F(  3,        15) =     656.77
+                                                Prob > F          =     0.0000
+
+------------------------------------------------------------------------------
+             |             Newey–West
+    logtuber | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    year1937 |  -.0478987   .0025377   -18.87   0.000    -.0533077   -.0424897
+    post1937 |   .0064055    .021909     0.29   0.774    -.0402925    .0531035
+yearpost1937 |   .0060489   .0058941     1.03   0.321     -.006514    .0186119
+       _cons |   3.956957   .0201615   196.26   0.000     3.913984    3.999931
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. eststo
+(est4 stored)
+
+. esttab
+
+----------------------------------------------------------------------------
+                      (1)             (2)             (3)             (4)   
+               logall_tot      logall_tot        logtuber        logtuber   
+----------------------------------------------------------------------------
+year1937          -0.0139***      -0.0120***      -0.0469***      -0.0479***
+                  (-6.38)         (-5.02)        (-22.09)        (-18.87)   
+
+post1937          -0.0244        -0.00747          0.0151         0.00641   
+                  (-1.06)         (-0.39)          (0.60)          (0.29)   
+
+yearpost1937                      -0.0117*                        0.00605   
+                                  (-2.47)                          (1.03)   
+
+_cons               7.035***        7.048***        3.963***        3.957***
+                 (382.51)        (341.33)        (215.64)        (196.26)   
+----------------------------------------------------------------------------
+N                      19              19              19              19   
+----------------------------------------------------------------------------
+t statistics in parentheses
+* p<0.05, ** p<0.01, *** p<0.001
+
+. esttab using "rt3_A.tex"
+(output written to rt3_A.tex)
+
+. eststo clear
+
+. do "C:\Users\franc\AppData\Local\Temp\STD3e8_000000.tmp"
+
+. newey logmmr year1937 post1937 if year < 1944 & year > 1924 , lag(2)
+
+Regression with Newey–West standard errors      Number of obs     =         19
+Maximum lag = 2                                 F(  2,        16) =      18.49
+                                                Prob > F          =     0.0001
+
+------------------------------------------------------------------------------
+             |             Newey–West
+      logmmr | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    year1937 |  -.0364238   .0134091    -2.72   0.015    -.0648497   -.0079978
+    post1937 |  -.3038777   .1391409    -2.18   0.044    -.5988432   -.0089122
+       _cons |   6.223148   .0777931    80.00   0.000     6.058234    6.388062
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. eststo
+(est1 stored)
+
+. do "C:\Users\franc\AppData\Local\Temp\STD3e8_000000.tmp"
+
+. newey logmmr year1937 post1937 yearpost1937  if year < 1944 & year > 1924 , lag(2)
+
+Regression with Newey–West standard errors      Number of obs     =         19
+Maximum lag = 2                                 F(  3,        15) =     344.57
+                                                Prob > F          =     0.0000
+
+------------------------------------------------------------------------------
+             |             Newey–West
+      logmmr | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    year1937 |  -.0187822   .0042659    -4.40   0.001    -.0278748   -.0096897
+    post1937 |  -.1482542   .0321902    -4.61   0.000     -.216866   -.0796423
+yearpost1937 |  -.1077394   .0086085   -12.52   0.000    -.1260879   -.0893909
+       _cons |   6.337818   .0263424   240.59   0.000      6.28167    6.393965
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. eststo
+(est2 stored)
+
+. do "C:\Users\franc\AppData\Local\Temp\STD3e8_000000.tmp"
+
+. newey loginpn year1937 post1937 if year < 1944 & year > 1924 , lag(2)
+
+Regression with Newey–West standard errors      Number of obs     =         19
+Maximum lag = 2                                 F(  2,        16) =      20.71
+                                                Prob > F          =     0.0000
+
+------------------------------------------------------------------------------
+             |             Newey–West
+     loginpn | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    year1937 |  -.0366985   .0110597    -3.32   0.004    -.0601441   -.0132529
+    post1937 |  -.1631481   .1223156    -1.33   0.201    -.4224457    .0961495
+       _cons |   4.556755   .0767782    59.35   0.000     4.393992    4.719517
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. eststo
+(est3 stored)
+
+. do "C:\Users\franc\AppData\Local\Temp\STD3e8_000000.tmp"
+
+. newey loginpn year1937 post1937 yearpost1937  if year < 1944 & year > 1924 , lag(2)
+
+Regression with Newey–West standard errors      Number of obs     =         19
+Maximum lag = 2                                 F(  3,        15) =      52.66
+                                                Prob > F          =     0.0000
+
+------------------------------------------------------------------------------
+             |             Newey–West
+     loginpn | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    year1937 |   -.022394   .0087436    -2.56   0.022    -.0410305   -.0037574
+    post1937 |  -.0369619   .0759155    -0.49   0.633    -.1987719    .1248481
+yearpost1937 |  -.0873597   .0262485    -3.33   0.005     -.143307   -.0314124
+       _cons |   4.649734    .072021    64.56   0.000     4.496225    4.803243
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. eststo
+(est4 stored)
+
+. do "C:\Users\franc\AppData\Local\Temp\STD3e8_000000.tmp"
+
+. newey logscar year1937 post1937 if year < 1944 & year > 1924 , lag(2)
+
+Regression with Newey–West standard errors      Number of obs     =         19
+Maximum lag = 2                                 F(  2,        16) =      13.11
+                                                Prob > F          =     0.0004
+
+------------------------------------------------------------------------------
+             |             Newey–West
+     logscar | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    year1937 |  -.0394315   .0274522    -1.44   0.170    -.0976276    .0187646
+    post1937 |  -.8617873   .3643122    -2.37   0.031    -1.634095   -.0894799
+       _cons |   .3630699   .1872068     1.94   0.070    -.0337908    .7599307
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. eststo
+(est5 stored)
+
+. do "C:\Users\franc\AppData\Local\Temp\STD3e8_000000.tmp"
+
+. newey logscar year1937 post1937 yearpost1937  if year < 1944 & year > 1924 , lag(2)
+
+Regression with Newey–West standard errors      Number of obs     =         19
+Maximum lag = 2                                 F(  3,        15) =     131.08
+                                                Prob > F          =     0.0000
+
+------------------------------------------------------------------------------
+             |             Newey–West
+     logscar | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    year1937 |   .0021317   .0068132     0.31   0.759    -.0123904    .0166538
+    post1937 |  -.4951408   .1035522    -4.78   0.000     -.715857   -.2744246
+yearpost1937 |  -.2538322   .0334039    -7.60   0.000    -.3250309   -.1826335
+       _cons |   .6332305   .0294109    21.53   0.000     .5705426    .6959184
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. eststo
+(est6 stored)
+
+. esttab using "rt3_B.tex"
+(output written to rt3_B.tex)
+
+. do "C:\Users\franc\AppData\Local\Temp\STD3e8_000000.tmp"
+
+. newey logall_tot year1937 post1937 if year < 1944 & year > 1924 , lag(2)
+
+Regression with Newey–West standard errors      Number of obs     =         19
+Maximum lag = 2                                 F(  2,        16) =      82.72
+                                                Prob > F          =     0.0000
+
+------------------------------------------------------------------------------
+             |             Newey–West
+  logall_tot | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    year1937 |  -.0139341   .0021848    -6.38   0.000    -.0185656   -.0093027
+    post1937 |  -.0244115    .022994    -1.06   0.304    -.0731566    .0243336
+       _cons |   7.035244   .0183922   382.51   0.000     6.996254    7.074233
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. margins
+
+Predictive margins                                          Number of obs = 19
+Model VCE: Newey–West
+
+Expression: Fitted values, predict()
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |     Margin   std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+       _cons |   7.068052   .0082297   858.85   0.000     7.051922    7.084182
+------------------------------------------------------------------------------
+
+. margins *
+all_tot:  factor variables may not contain noninteger values
+r(452);
+
+. do "C:\Users\franc\AppData\Local\Temp\STD3e8_000000.tmp"
+
+. drop if year > 1943 | year < 1925
+(12 observations deleted)
+
+. rename tuberculosis_total d1
+
+. rename mmr d2
+
+. rename scarlet_fever_tot d3
+
+. rename influenza_pneumonia_total d4
+
+. reshape long d, i(year) j(disease) 
+(j = 1 2 3 4)
+
+Data                               Wide   ->   Long
+-----------------------------------------------------------------------------
+Number of observations               19   ->   76          
+Number of variables                  61   ->   59          
+j variable (4 values)                     ->   disease
+xij variables:
+                           d1 d2 ... d4   ->   d
+-----------------------------------------------------------------------------
+
+. gen treated = 1
+
+. replace treated = 0 if disease == 1
+(19 real changes made)
+
+. rename d mortality
+
+. gen logmortality = ln(mortality)
+
+. 
+. gen treatedxpost1937 = treated*post1937
+
+. gen treatedxyear = treated*year1937
+
+. gen treatxpostxyear = treated*post1937*year1937
+
+. 
+end of do-file
+
+. do "C:\Users\franc\AppData\Local\Temp\STD3e8_000000.tmp"
+
+. reg logmortality post1937 year1937 treated treatedxpost1937 treatedxyear if disease == 1|disease == 2, robust
+
+Linear regression                               Number of obs     =         38
+                                                F(5, 32)          =    2745.06
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.9931
+                                                Root MSE          =     .09982
+
+----------------------------------------------------------------------------------
+                 |               Robust
+    logmortality | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-----------------+----------------------------------------------------------------
+        post1937 |   .0151428   .0264071     0.57   0.570    -.0386466    .0689322
+        year1937 |  -.0469082   .0023661   -19.83   0.000    -.0517278   -.0420887
+         treated |   2.259752   .0664712    34.00   0.000     2.124355     2.39515
+treatedxpost1937 |  -.3190206   .1182845    -2.70   0.011    -.5599583   -.0780828
+    treatedxyear |   .0104844   .0109111     0.96   0.344    -.0117408    .0327096
+           _cons |   3.963395   .0182773   216.85   0.000     3.926166    4.000625
+----------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. eststo clear
+
+. eststo
+(est1 stored)
+
+. do "C:\Users\franc\AppData\Local\Temp\STD3e8_000000.tmp"
+
+. reg logmortality post1937 year1937 treated treatedxpost1937 treatedxyear treatxpostxyear if disease == 1|disease == 2
+> , robust
+
+Linear regression                               Number of obs     =         38
+                                                F(6, 31)          =    7075.85
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.9990
+                                                Root MSE          =     .03897
+
+----------------------------------------------------------------------------------
+                 |               Robust
+    logmortality | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-----------------+----------------------------------------------------------------
+        post1937 |   .0151428   .0268296     0.56   0.577    -.0395765    .0698621
+        year1937 |  -.0469082   .0024039   -19.51   0.000    -.0518111   -.0420053
+         treated |   2.374422    .027233    87.19   0.000      2.31888    2.429964
+treatedxpost1937 |   -.163397   .0410237    -3.98   0.000    -.2470653   -.0797287
+    treatedxyear |    .028126   .0041419     6.79   0.000     .0196785    .0365734
+ treatxpostxyear |  -.1077394   .0090871   -11.86   0.000    -.1262726   -.0892062
+           _cons |   3.963395   .0185698   213.43   0.000     3.925522    4.001269
+----------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. eststo
+(est2 stored)
+
+. do "C:\Users\franc\AppData\Local\Temp\STD3e8_000000.tmp"
+
+. reg logmortality post1937 year1937 treated treatedxpost1937 treatedxyear if disease == 1|disease == 4, robust
+
+Linear regression                               Number of obs     =         38
+                                                F(5, 32)          =     380.59
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.9133
+                                                Root MSE          =     .12093
+
+----------------------------------------------------------------------------------
+                 |               Robust
+    logmortality | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-----------------+----------------------------------------------------------------
+        post1937 |   .0151428   .0264071     0.57   0.570    -.0386466    .0689322
+        year1937 |  -.0469082   .0023661   -19.83   0.000    -.0517278   -.0420887
+         treated |   .5933593   .0996011     5.96   0.000     .3904785    .7962401
+treatedxpost1937 |  -.1782909   .1755818    -1.02   0.318    -.5359394    .1793575
+    treatedxyear |   .0102097   .0144545     0.71   0.485    -.0192331    .0396526
+           _cons |   3.963395   .0182773   216.85   0.000     3.926166    4.000625
+----------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. eststo
+(est3 stored)
+
+. do "C:\Users\franc\AppData\Local\Temp\STD3e8_000000.tmp"
+
+. reg logmortality post1937 year1937 treated treatedxpost1937 treatedxyear treatxpostxyear if disease == 1|disease == 4
+> , robust
+
+Linear regression                               Number of obs     =         38
+                                                F(6, 31)          =     318.05
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.9464
+                                                Root MSE          =      .0966
+
+----------------------------------------------------------------------------------
+                 |               Robust
+    logmortality | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-----------------+----------------------------------------------------------------
+        post1937 |   .0151428   .0268296     0.56   0.577    -.0395765    .0698621
+        year1937 |  -.0469082   .0024039   -19.51   0.000    -.0518111   -.0420053
+         treated |   .6863386   .0745306     9.21   0.000     .5343323    .8383448
+treatedxpost1937 |  -.0521047   .1256947    -0.41   0.681    -.3084608    .2042513
+    treatedxyear |   .0245143   .0113413     2.16   0.038     .0013835     .047645
+ treatxpostxyear |  -.0873597   .0313906    -2.78   0.009    -.1513812   -.0233381
+           _cons |   3.963395   .0185698   213.43   0.000     3.925522    4.001269
+----------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. eststo
+(est4 stored)
+
+. do "C:\Users\franc\AppData\Local\Temp\STD3e8_000000.tmp"
+
+. reg logmortality post1937 year1937 treated treatedxpost1937 treatedxyear if disease == 1|disease == 3, robust
+
+Linear regression                               Number of obs     =         38
+                                                F(5, 32)          =    1443.28
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.9891
+                                                Root MSE          =     .23179
+
+----------------------------------------------------------------------------------
+                 |               Robust
+    logmortality | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-----------------+----------------------------------------------------------------
+        post1937 |   .0151428   .0264071     0.57   0.570    -.0386466    .0689322
+        year1937 |  -.0469082   .0023661   -19.83   0.000    -.0517278   -.0420887
+         treated |  -3.600325   .1660592   -21.68   0.000    -3.938577   -3.262074
+treatedxpost1937 |  -.8769302   .3365878    -2.61   0.014    -1.562537   -.1913232
+    treatedxyear |   .0074767   .0237018     0.32   0.754    -.0408023    .0557558
+           _cons |   3.963395   .0182773   216.85   0.000     3.926166    4.000625
+----------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. eststo
+(est5 stored)
+
+. do "C:\Users\franc\AppData\Local\Temp\STD3e8_000000.tmp"
+
+. reg logmortality post1937 year1937 treated treatedxpost1937 treatedxyear treatxpostxyear if disease == 1|disease == 3
+> , robust
+
+Linear regression                               Number of obs     =         38
+                                                F(6, 31)          =    8875.59
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.9987
+                                                Root MSE          =     .08243
+
+----------------------------------------------------------------------------------
+                 |               Robust
+    logmortality | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-----------------+----------------------------------------------------------------
+        post1937 |   .0151428   .0268296     0.56   0.577    -.0395765    .0698621
+        year1937 |  -.0469082   .0024039   -19.51   0.000    -.0518111   -.0420053
+         treated |  -3.330165   .0364964   -91.25   0.000      -3.4046    -3.25573
+treatedxpost1937 |  -.5102836   .1103809    -4.62   0.000     -.735407   -.2851603
+    treatedxyear |   .0490399   .0067466     7.27   0.000     .0352802    .0627996
+ treatxpostxyear |  -.2538322   .0363281    -6.99   0.000    -.3279238   -.1797406
+           _cons |   3.963395   .0185698   213.43   0.000     3.925522    4.001269
+----------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. eststo
+(est6 stored)
+
+. esttab using "rt4_A.tex"
+(output written to rt4_A.tex)
+
+. eststo clear
+
+. do "C:\Users\franc\AppData\Local\Temp\STD3e8_000000.tmp"
+
+. clear all
+
+. use "state_data"
+
+. 
+. drop if year > 1943 | year < 1925
+(515 observations deleted)
+
+. rename tb_rate d1
+
+. rename mmr d2
+
+. rename scarfever_rate d3
+
+. rename infl_pneumonia_rate d4
+
+. 
+. reshape long d, i(state year) j(disease) 
+(j = 1 2 3 4)
+
+Data                               Wide   ->   Long
+-----------------------------------------------------------------------------
+Number of observations              881   ->   3,524       
+Number of variables                  17   ->   15          
+j variable (4 values)                     ->   disease
+xij variables:
+                           d1 d2 ... d4   ->   d
+-----------------------------------------------------------------------------
+
+. gen treated = 1
+
+. replace treated = 0 if disease == 1
+(881 real changes made)
+
+. rename d mortality
+
+. gen logmortality = ln(mortality)
+(67 missing values generated)
+
+. 
+. gen year1937 = year - 1937
+
+. gen post1937 = 0
+
+. replace post1937 = 1 if year > 1936
+(1,344 real changes made)
+
+. 
+. gen treatedxyear = treated*year1937
+
+. gen treatedxpost1937 = treated*post1937
+
+. gen treatxpostxyear = treated*post1937*year1937
+
+. 
+. egen stapost1937=group(state post1937)
+
+. xi i.stapost1937*year1937
+i.stapost1937     _Istapost19_1-96    (naturally coded; _Istapost19_1 omitted)
+i.s~1937*y~1937   _IstaXyear_#        (coded as above)
+
+. egen diseaseyear=group(disease year1937)
+
+. 
+. xi: areg logmortality year1937 treated treatedxpost1937 treatedxyear if disease == 1|disease == 2, absorb(stapost1937
+> ) cluster(diseaseyear)
+
+Linear regression, absorbing indicators          Number of obs     =     1,736
+Absorbed variable: stapost1937                   No. of categories =        96
+                                                 F(4, 37)          = 127397.77
+                                                 Prob > F          =    0.0000
+                                                 R-squared         =    0.9989
+                                                 Adj R-squared     =    0.9988
+                                                 Root MSE          =    0.2399
+
+                               (Std. err. adjusted for 38 clusters in diseaseyear)
+----------------------------------------------------------------------------------
+                 |               Robust
+    logmortality | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-----------------+----------------------------------------------------------------
+        year1937 |  -.0503663   .0022676   -22.21   0.000    -.0549608   -.0457717
+         treated |   13.88091    .062924   220.60   0.000     13.75342    14.00841
+treatedxpost1937 |  -.2811377   .1075973    -2.61   0.013    -.4991506   -.0631248
+    treatedxyear |    .005558   .0100403     0.55   0.583    -.0147856    .0259015
+           _cons |  -7.684239   .0083745  -917.58   0.000    -7.701207    -7.66727
+----------------------------------------------------------------------------------
+
+. 
+. eststo
+(est1 stored)
+
+. 
+. xi: reg logmortality i.stapost1937*year1937 treated treatedxpost1937 treatedxyear treatxpostxyear if disease == 1|dis
+> ease == 2, cluster(diseaseyear)
+i.stapost1937     _Istapost19_1-96    (naturally coded; _Istapost19_1 omitted)
+i.s~1937*y~1937   _IstaXyear_#        (coded as above)
+
+Linear regression                               Number of obs     =      1,736
+                                                F(35, 37)         =          .
+                                                Prob > F          =          .
+                                                R-squared         =     0.9990
+                                                Root MSE          =     .22935
+
+                               (Std. err. adjusted for 38 clusters in diseaseyear)
+----------------------------------------------------------------------------------
+                 |               Robust
+    logmortality | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-----------------+----------------------------------------------------------------
+   _Istapost19_2 |   .1559638    .068819     2.27   0.029     .0165233    .2954043
+   _Istapost19_3 |   .6203937     .30141     2.06   0.047     .0096791    1.231108
+   _Istapost19_4 |   .6462943   .3565918     1.81   0.078    -.0762293    1.368818
+   _Istapost19_5 |  -.1260868   .0560799    -2.25   0.031    -.2397155   -.0124582
+   _Istapost19_6 |   .0182742   .0704512     0.26   0.797    -.1244735    .1610219
+   _Istapost19_7 |  -.1634083   .1245755    -1.31   0.198    -.4158223    .0890057
+   _Istapost19_8 |  -.1455359   .1500897    -0.97   0.339    -.4496465    .1585747
+   _Istapost19_9 |   .0264489   .0706533     0.37   0.710    -.1167083     .169606
+  _Istapost19_10 |   .0739434   .0820067     0.90   0.373    -.0922179    .2401048
+  _Istapost19_11 |  -.4447092   .0558302    -7.97   0.000    -.5578319   -.3315864
+  _Istapost19_12 |  -.5711438   .1132229    -5.04   0.000    -.8005553   -.3417324
+  _Istapost19_13 |  -.0676323   .0608941    -1.11   0.274    -.1910154    .0557509
+  _Istapost19_14 |   -.048877   .1133412    -0.43   0.669     -.278528    .1807741
+  _Istapost19_15 |   .0483133   .1123385     0.43   0.670    -.1793061    .2759327
+  _Istapost19_16 |   .1403529   .0996523     1.41   0.167     -.061562    .3422677
+  _Istapost19_17 |  -.0335425   .0756904    -0.44   0.660    -.1869058    .1198209
+  _Istapost19_18 |   .0774932   .0969693     0.80   0.429    -.1189853    .2739718
+  _Istapost19_19 |  -.5839128   .1754232    -3.33   0.002    -.9393539   -.2284717
+  _Istapost19_20 |  -.6853434    .191118    -3.59   0.001    -1.072585   -.2981016
+  _Istapost19_21 |  -.2778464   .0566557    -4.90   0.000    -.3926418    -.163051
+  _Istapost19_22 |  -.2743875   .0908997    -3.02   0.005    -.4585678   -.0902072
+  _Istapost19_23 |    -.22985    .054863    -4.19   0.000    -.3410131    -.118687
+  _Istapost19_24 |   -.303429   .0894171    -3.39   0.002    -.4846052   -.1222527
+  _Istapost19_25 |  -.6287391   .1598677    -3.93   0.000    -.9526617   -.3048164
+  _Istapost19_26 |  -.6610395   .1775206    -3.72   0.001     -1.02073   -.3013487
+  _Istapost19_27 |  -.4611643   .1585271    -2.91   0.006    -.7823708   -.1399578
+  _Istapost19_28 |  -.5137958   .1488784    -3.45   0.001    -.8154521   -.2121394
+  _Istapost19_29 |  -.0137707   .1001695    -0.14   0.891    -.2167333     .189192
+  _Istapost19_30 |   .0564427    .141209     0.40   0.692    -.2296739    .3425593
+  _Istapost19_31 |   .1084874   .0431071     2.52   0.016     .0211442    .1958307
+  _Istapost19_32 |   .1745391   .0563794     3.10   0.004     .0603036    .2887746
+  _Istapost19_33 |  -.3434706   .0947748    -3.62   0.001    -.5355026   -.1514385
+  _Istapost19_34 |  -.2638631   .1434925    -1.84   0.074    -.5546066    .0268804
+  _Istapost19_35 |  -.0430192   .1288657    -0.33   0.740    -.3041259    .2180876
+  _Istapost19_36 |   .0227959   .1809177     0.13   0.900    -.3437781      .38937
+  _Istapost19_37 |  -.2745764   .0605876    -4.53   0.000    -.3973385   -.1518142
+  _Istapost19_38 |  -.2946412   .0636154    -4.63   0.000    -.4235383   -.1657442
+  _Istapost19_39 |  -.3202266   .0639215    -5.01   0.000    -.4497439   -.1907094
+  _Istapost19_40 |  -.3933851   .0649468    -6.06   0.000    -.5249798   -.2617903
+  _Istapost19_41 |  -.5505203   .0627538    -8.77   0.000    -.6776716    -.423369
+  _Istapost19_42 |  -.5770337    .059736    -9.66   0.000    -.6980703   -.4559971
+  _Istapost19_43 |  -.0686734   .0414314    -1.66   0.106    -.1526215    .0152746
+  _Istapost19_44 |   .0948506   .0772475     1.23   0.227    -.0616677    .2513689
+  _Istapost19_45 |  -.0963848     .03402    -2.83   0.007    -.1653158   -.0274538
+  _Istapost19_46 |  -.1259873   .0710746    -1.77   0.085    -.2699982    .0180236
+  _Istapost19_47 |  -.2888083   .0606499    -4.76   0.000    -.4116967     -.16592
+  _Istapost19_48 |   -.334585   .0760597    -4.40   0.000    -.4886967   -.1804734
+  _Istapost19_49 |  -.7138148   .2127829    -3.35   0.002    -1.144954   -.2826757
+  _Istapost19_50 |  -.7207301   .1973725    -3.65   0.001    -1.120645   -.3208155
+  _Istapost19_51 |   .1806051   .1613161     1.12   0.270    -.1462523    .5074626
+  _Istapost19_52 |   .3986448   .1254486     3.18   0.003     .1444617    .6528278
+  _Istapost19_53 |  -.4282514   .1102932    -3.88   0.000    -.6517267   -.2047761
+  _Istapost19_54 |  -.4738023   .1139518    -4.16   0.000    -.7046905    -.242914
+  _Istapost19_55 |  -.2908077   .0713888    -4.07   0.000    -.4354551   -.1461602
+  _Istapost19_56 |  -.2856937   .0875879    -3.26   0.002    -.4631636   -.1082237
+  _Istapost19_57 |   .2330865   .1592358     1.46   0.152    -.0895559    .5557288
+  _Istapost19_58 |   .2432422   .1680136     1.45   0.156    -.0971857      .58367
+  _Istapost19_59 |  -.1716845   .0591204    -2.90   0.006    -.2914738   -.0518953
+  _Istapost19_60 |  -.2319701   .0988628    -2.35   0.024    -.4322852    -.031655
+  _Istapost19_61 |  -.0404933   .0396314    -1.02   0.314    -.1207941    .0398075
+  _Istapost19_62 |   .0043877   .0585135     0.07   0.941    -.1141719    .1229472
+  _Istapost19_63 |  -.6794055   .1384355    -4.91   0.000    -.9599025   -.3989086
+  _Istapost19_64 |  -.7589699   .1686926    -4.50   0.000    -1.100774   -.4171662
+  _Istapost19_65 |  -.1922049   .0612957    -3.14   0.003    -.3164019    -.068008
+  _Istapost19_66 |  -.2290453    .061049    -3.75   0.001    -.3527423   -.1053483
+  _Istapost19_67 |  -.1583256   .0572924    -2.76   0.009    -.2744111   -.0422401
+  _Istapost19_68 |  -.1399574   .0576733    -2.43   0.020    -.2568147   -.0231002
+  _Istapost19_69 |  -.4879448   .1068315    -4.57   0.000     -.704406   -.2714835
+  _Istapost19_70 |  -.4763925   .0707469    -6.73   0.000    -.6197394   -.3330456
+  _Istapost19_71 |  -.2498193   .0496948    -5.03   0.000    -.3505105   -.1491282
+  _Istapost19_72 |  -.2264652   .0629282    -3.60   0.001    -.3539698   -.0989605
+  _Istapost19_73 |  -.3462615   .0710681    -4.87   0.000    -.4902592   -.2022638
+  _Istapost19_74 |  -.4329447   .0913053    -4.74   0.000    -.6179467   -.2479426
+  _Istapost19_75 |    .054988   .1028761     0.53   0.596    -.1534589    .2634348
+  _Istapost19_76 |   .1192586   .1288548     0.93   0.361    -.1418261    .3803433
+  _Istapost19_77 |  -.3038649   .1481311    -2.05   0.047     -.604007   -.0037228
+  _Istapost19_78 |  -.3748924   .0626641    -5.98   0.000     -.501862   -.2479228
+  _Istapost19_79 |   .1268771   .1019388     1.24   0.221    -.0796706    .3334248
+  _Istapost19_80 |   .2130256   .1143913     1.86   0.071    -.0187531    .4448043
+  _Istapost19_81 |   .0860848   .0745392     1.15   0.256     -.064946    .2371157
+  _Istapost19_82 |   .1244578   .0701189     1.77   0.084    -.0176165    .2665321
+  _Istapost19_83 |  -.8486106   .1871453    -4.53   0.000    -1.227803   -.4694182
+  _Istapost19_84 |  -.7650193     .14713    -5.20   0.000    -1.063133   -.4669055
+  _Istapost19_85 |   -.262903   .0838913    -3.13   0.003    -.4328829   -.0929232
+  _Istapost19_86 |  -.1700402   .0786395    -2.16   0.037    -.3293789   -.0107014
+  _Istapost19_87 |   .0137353   .0814196     0.17   0.867    -.1512366    .1787071
+  _Istapost19_88 |   .0879835   .0767049     1.15   0.259    -.0674354    .2434024
+  _Istapost19_89 |  -.2868789   .0368072    -7.79   0.000    -.3614573   -.2123005
+  _Istapost19_90 |  -.2611092    .071628    -3.65   0.001    -.4062414    -.115977
+  _Istapost19_91 |  -.2100113   .0435053    -4.83   0.000    -.2981615   -.1218611
+  _Istapost19_92 |  -.1744456   .0726089    -2.40   0.021    -.3215651    -.027326
+  _Istapost19_93 |  -.5488714      .0449   -12.22   0.000    -.6398476   -.4578953
+  _Istapost19_94 |  -.5528949   .0618691    -8.94   0.000    -.6782536   -.4275362
+  _Istapost19_95 |  -.7356908   .2284608    -3.22   0.003    -1.198596   -.2727853
+  _Istapost19_96 |  -.6093622   .1602752    -3.80   0.001    -.9341106   -.2846139
+        year1937 |  -.0524957   .0080184    -6.55   0.000    -.0687425   -.0362489
+    _IstaXyear_2 |   .0016809   .0151538     0.11   0.912    -.0290237    .0323855
+    _IstaXyear_3 |  -.0023745   .0470234    -0.05   0.960    -.0976529    .0929038
+    _IstaXyear_4 |  -.0176053   .0892625    -0.20   0.845    -.1984683    .1632577
+    _IstaXyear_5 |  -.0073246    .008318    -0.88   0.384    -.0241784    .0095291
+    _IstaXyear_6 |   .0343843   .0150946     2.28   0.029     .0037997    .0649688
+    _IstaXyear_7 |  -.0043686   .0199211    -0.22   0.828    -.0447326    .0359954
+    _IstaXyear_8 |   .0038213   .0386272     0.10   0.922    -.0744449    .0820875
+    _IstaXyear_9 |  -.0176892   .0172648    -1.02   0.312     -.052671    .0172925
+   _IstaXyear_10 |  -.0328746   .0204482    -1.61   0.116    -.0743066    .0085574
+   _IstaXyear_11 |  -.0031694   .0106682    -0.30   0.768    -.0247853    .0184465
+   _IstaXyear_12 |   .0420164   .0290885     1.44   0.157    -.0169225    .1009552
+   _IstaXyear_13 |   .0059774   .0112935     0.53   0.600    -.0169055    .0288603
+   _IstaXyear_14 |   -.007029   .0327694    -0.21   0.831    -.0734261     .059368
+   _IstaXyear_15 |   .0030491   .0152741     0.20   0.843    -.0278991    .0339973
+   _IstaXyear_16 |   .0098021   .0268046     0.37   0.717    -.0445093    .0641134
+   _IstaXyear_17 |  -.0076952    .013454    -0.57   0.571    -.0349556    .0195652
+   _IstaXyear_18 |   .0146862   .0263524     0.56   0.581    -.0387088    .0680811
+   _IstaXyear_19 |   .0030662   .0232681     0.13   0.896    -.0440795    .0502119
+   _IstaXyear_20 |   .0189936   .0539117     0.35   0.727    -.0902419    .1282291
+   _IstaXyear_21 |   .0062078   .0091618     0.68   0.502    -.0123557    .0247714
+   _IstaXyear_22 |   .0202021   .0219709     0.92   0.364    -.0243151    .0647194
+   _IstaXyear_23 |   .0052285   .0092887     0.56   0.577    -.0135922    .0240493
+   _IstaXyear_24 |   .0144378   .0199462     0.72   0.474     -.025977    .0548526
+   _IstaXyear_25 |   .0094343   .0203792     0.46   0.646    -.0318579    .0507266
+   _IstaXyear_26 |  -.0094314   .0447225    -0.21   0.834    -.1000477     .081185
+   _IstaXyear_27 |   .0127397   .0208247     0.61   0.544    -.0294552    .0549347
+   _IstaXyear_28 |   .0131937   .0389171     0.34   0.737    -.0656598    .0920471
+   _IstaXyear_29 |   .0126248   .0171475     0.74   0.466    -.0221194     .047369
+   _IstaXyear_30 |   .0225651   .0371338     0.61   0.547    -.0526752    .0978054
+   _IstaXyear_31 |   .0068895   .0069209     1.00   0.326    -.0071335    .0209126
+   _IstaXyear_32 |   .0015547   .0104644     0.15   0.883    -.0196482    .0227577
+   _IstaXyear_33 |  -.0040172   .0127121    -0.32   0.754    -.0297745      .02174
+   _IstaXyear_34 |   -.006418   .0311242    -0.21   0.838    -.0694816    .0566456
+   _IstaXyear_35 |   .0108621   .0191545     0.57   0.574    -.0279485    .0496727
+   _IstaXyear_36 |   .0021816   .0547179     0.04   0.968    -.1086875    .1130507
+   _IstaXyear_37 |   .0001758   .0095943     0.02   0.985    -.0192641    .0196158
+   _IstaXyear_38 |   .0145089   .0174766     0.83   0.412     -.020902    .0499198
+   _IstaXyear_39 |   .0020002   .0094659     0.21   0.834    -.0171796      .02118
+   _IstaXyear_40 |   .0161721   .0152202     1.06   0.295    -.0146669    .0470112
+   _IstaXyear_41 |  -.0022592   .0091601    -0.25   0.807    -.0208194    .0163009
+   _IstaXyear_42 |   -.000961   .0127708    -0.08   0.940    -.0268371    .0249152
+   _IstaXyear_43 |  -.0061257   .0072797    -0.84   0.405    -.0208759    .0086244
+   _IstaXyear_44 |   .0252729   .0218131     1.16   0.254    -.0189246    .0694703
+   _IstaXyear_45 |   .0117389    .006602     1.78   0.084     -.001638    .0251158
+   _IstaXyear_46 |   .0123426   .0150505     0.82   0.417    -.0181526    .0428379
+   _IstaXyear_47 |  -.0043026   .0088474    -0.49   0.630    -.0222292     .013624
+   _IstaXyear_48 |   .0093136   .0199862     0.47   0.644    -.0311823    .0498095
+   _IstaXyear_49 |   .0074294   .0274255     0.27   0.788      -.04814    .0629988
+   _IstaXyear_50 |  -.0052893   .0485099    -0.11   0.914    -.1035798    .0930011
+   _IstaXyear_51 |   .0136328   .0317774     0.43   0.670    -.0507543    .0780198
+   _IstaXyear_52 |  -.0950832   .0703289    -1.35   0.185     -.237583    .0474166
+   _IstaXyear_53 |    -.00857    .013427    -0.64   0.527    -.0357757    .0186356
+   _IstaXyear_54 |  -.0000773   .0379255    -0.00   0.998    -.0769216     .076767
+   _IstaXyear_55 |   .0024242   .0108572     0.22   0.825    -.0195745    .0244229
+   _IstaXyear_56 |   .0221274   .0262733     0.84   0.405    -.0311073    .0753621
+   _IstaXyear_57 |  -.0224951   .0406631    -0.55   0.583    -.1048865    .0598963
+   _IstaXyear_58 |   .0258505   .0381436     0.68   0.502    -.0514359    .1031369
+   _IstaXyear_59 |   .0126158   .0107847     1.17   0.250     -.009236    .0344677
+   _IstaXyear_60 |    .016523   .0262676     0.63   0.533    -.0367002    .0697463
+   _IstaXyear_61 |   .0059327   .0062171     0.95   0.346    -.0066643    .0185297
+   _IstaXyear_62 |   .0092076   .0156512     0.59   0.560    -.0225047    .0409199
+   _IstaXyear_63 |   .0002656   .0168053     0.02   0.987    -.0337851    .0343162
+   _IstaXyear_64 |   .0346225   .0527552     0.66   0.516    -.0722698    .1415147
+   _IstaXyear_65 |   .0097936   .0089684     1.09   0.282    -.0083782    .0279654
+   _IstaXyear_66 |   .0071379   .0143736     0.50   0.622    -.0219859    .0362617
+   _IstaXyear_67 |   .0205775   .0119341     1.72   0.093    -.0036034    .0447583
+   _IstaXyear_68 |   .0206402   .0121402     1.70   0.097    -.0039581    .0452386
+   _IstaXyear_69 |  -.0022556   .0133427    -0.17   0.867    -.0292905    .0247794
+   _IstaXyear_70 |  -.0196096   .0134577    -1.46   0.154    -.0468775    .0076583
+   _IstaXyear_71 |   .0062168   .0083518     0.74   0.461    -.0107055    .0231391
+   _IstaXyear_72 |   .0263149   .0121006     2.17   0.036     .0017967     .050833
+   _IstaXyear_73 |  -.0039205   .0117885    -0.33   0.741    -.0278062    .0199653
+   _IstaXyear_74 |   .0335397   .0234778     1.43   0.162    -.0140309    .0811103
+   _IstaXyear_75 |  -.0004476     .01303    -0.03   0.973    -.0268489    .0259536
+   _IstaXyear_76 |   .0196985   .0407233     0.48   0.631    -.0628146    .1022117
+   _IstaXyear_77 |   .0503692   .0374506     1.34   0.187    -.0255129    .1262513
+   _IstaXyear_78 |  -.0111145   .0126602    -0.88   0.386    -.0367665    .0145374
+   _IstaXyear_79 |   .0004545   .0181412     0.03   0.980    -.0363031     .037212
+   _IstaXyear_80 |   .0081251   .0301636     0.27   0.789    -.0529922    .0692423
+   _IstaXyear_81 |   .0234765   .0218808     1.07   0.290    -.0208583    .0678113
+   _IstaXyear_82 |  -.0047524   .0171688    -0.28   0.783    -.0395397    .0300349
+   _IstaXyear_83 |   .0000964   .0251058     0.00   0.997    -.0507727    .0509656
+   _IstaXyear_84 |  -.0213268   .0434281    -0.49   0.626    -.1093204    .0666668
+   _IstaXyear_85 |   .0012022   .0114432     0.11   0.917    -.0219839    .0243883
+   _IstaXyear_86 |  -.0237638   .0170852    -1.39   0.173    -.0583817    .0108541
+   _IstaXyear_87 |   .0072455   .0124597     0.58   0.564    -.0180001    .0324912
+   _IstaXyear_88 |    .014583   .0173721     0.84   0.407    -.0206162    .0497822
+   _IstaXyear_89 |   .0011731   .0073274     0.16   0.874    -.0136735    .0160198
+   _IstaXyear_90 |  -.0186511   .0244053    -0.76   0.450    -.0681008    .0307987
+   _IstaXyear_91 |   .0107616   .0083041     1.30   0.203    -.0060641    .0275872
+   _IstaXyear_92 |   .0147845   .0160517     0.92   0.363    -.0177394    .0473084
+   _IstaXyear_93 |  -.0067194   .0081455    -0.82   0.415    -.0232238    .0097851
+   _IstaXyear_94 |    .011707   .0152128     0.77   0.446    -.0191171    .0425311
+   _IstaXyear_95 |  -.0186021   .0330801    -0.56   0.577    -.0856288    .0484246
+   _IstaXyear_96 |  -.0282688   .0442247    -0.64   0.527    -.1178764    .0613389
+         treated |    13.9976   .0204824   683.40   0.000      13.9561     14.0391
+treatedxpost1937 |  -.1440847   .0350975    -4.11   0.000     -.215199   -.0729703
+    treatedxyear |     .02442   .0031121     7.85   0.000     .0181142    .0307257
+ treatxpostxyear |  -.1034404   .0097672   -10.59   0.000    -.1232306   -.0836501
+           _cons |  -7.467598   .0506199  -147.52   0.000    -7.570164   -7.365032
+----------------------------------------------------------------------------------
+
+. 
+. eststo
+(est2 stored)
+
+. 
+. xi: areg logmortality year1937 treated treatedxpost1937 treatedxyear if disease == 1|disease == 4, absorb(stapost1937
+> ) cluster(diseaseyear)
+
+Linear regression, absorbing indicators             Number of obs     =  1,736
+Absorbed variable: stapost1937                      No. of categories =     96
+                                                    F(4, 37)          = 190.49
+                                                    Prob > F          = 0.0000
+                                                    R-squared         = 0.8219
+                                                    Adj R-squared     = 0.8112
+                                                    Root MSE          = 0.2318
+
+                               (Std. err. adjusted for 38 clusters in diseaseyear)
+----------------------------------------------------------------------------------
+                 |               Robust
+    logmortality | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-----------------+----------------------------------------------------------------
+        year1937 |  -.0502019    .002277   -22.05   0.000    -.0548156   -.0455881
+         treated |   .7052798   .1002995     7.03   0.000     .5020537    .9085058
+treatedxpost1937 |  -.1428445   .1689617    -0.85   0.403    -.4851935    .1995044
+    treatedxyear |    .014413   .0141585     1.02   0.315     -.014275    .0431009
+           _cons |  -7.683806   .0083458  -920.68   0.000    -7.700716   -7.666896
+----------------------------------------------------------------------------------
+
+. 
+. eststo
+(est3 stored)
+
+. 
+. xi: reg logmortality i.stapost1937*year1937 treated treatedxpost1937 treatedxyear treatxpostxyear if disease == 1|dis
+> ease == 4, cluster(diseaseyear)
+i.stapost1937     _Istapost19_1-96    (naturally coded; _Istapost19_1 omitted)
+i.s~1937*y~1937   _IstaXyear_#        (coded as above)
+
+Linear regression                               Number of obs     =      1,736
+                                                F(35, 37)         =          .
+                                                Prob > F          =          .
+                                                R-squared         =     0.8393
+                                                Root MSE          =       .227
+
+                               (Std. err. adjusted for 38 clusters in diseaseyear)
+----------------------------------------------------------------------------------
+                 |               Robust
+    logmortality | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-----------------+----------------------------------------------------------------
+   _Istapost19_2 |   .0573557   .0601032     0.95   0.346     -.064425    .1791364
+   _Istapost19_3 |   .7031827   .2576126     2.73   0.010     .1812099    1.225155
+   _Istapost19_4 |   .8316718   .2646006     3.14   0.003     .2955402    1.367804
+   _Istapost19_5 |  -.1085842   .0607082    -1.79   0.082    -.2315907    .0144223
+   _Istapost19_6 |  -.0244726   .0690319    -0.35   0.725    -.1643445    .1153992
+   _Istapost19_7 |  -.2535866   .1543298    -1.64   0.109    -.5662885    .0591152
+   _Istapost19_8 |   -.190116   .1564394    -1.22   0.232    -.5070924    .1268604
+   _Istapost19_9 |   .0374128   .0582467     0.64   0.525    -.0806064    .1554319
+  _Istapost19_10 |   .1127219   .0594594     1.90   0.066    -.0077543    .2331981
+  _Istapost19_11 |  -.5451673   .0659383    -8.27   0.000    -.6787711   -.4115635
+  _Istapost19_12 |  -.5535408   .0889307    -6.22   0.000    -.7337315   -.3733502
+  _Istapost19_13 |  -.1692044   .0919289    -1.84   0.074    -.3554701    .0170613
+  _Istapost19_14 |  -.1508635   .0767913    -1.96   0.057    -.3064574    .0047304
+  _Istapost19_15 |  -.2005608   .0553169    -3.63   0.001    -.3126436   -.0884781
+  _Istapost19_16 |  -.1246456   .0785905    -1.59   0.121     -.283885    .0345939
+  _Istapost19_17 |  -.0204028   .0885413    -0.23   0.819    -.1998045     .158999
+  _Istapost19_18 |  -.0065684   .0674631    -0.10   0.923    -.1432615    .1301248
+  _Istapost19_19 |  -.6075112   .1612023    -3.77   0.001    -.9341381   -.2808843
+  _Istapost19_20 |  -.6641629    .173927    -3.82   0.000    -1.016572   -.3117534
+  _Istapost19_21 |  -.3422519   .0621372    -5.51   0.000    -.4681538   -.2163501
+  _Istapost19_22 |   -.325945   .1151761    -2.83   0.007     -.559314    -.092576
+  _Istapost19_23 |  -.2308078   .0495506    -4.66   0.000    -.3312068   -.1304088
+  _Istapost19_24 |  -.2318115    .069855    -3.32   0.002    -.3733511   -.0902718
+  _Istapost19_25 |  -.6170897   .1743174    -3.54   0.001    -.9702904   -.2638891
+  _Istapost19_26 |  -.6757358    .182651    -3.70   0.001    -1.045822   -.3056496
+  _Istapost19_27 |  -.4937326   .1509934    -3.27   0.002    -.7996742   -.1877909
+  _Istapost19_28 |  -.6127578   .1143443    -5.36   0.000    -.8444413   -.3810743
+  _Istapost19_29 |   .0680687    .061998     1.10   0.279    -.0575511    .1936886
+  _Istapost19_30 |   .1444646   .0946519     1.53   0.135    -.0473183    .3362476
+  _Istapost19_31 |  -.0826949   .0769608    -1.07   0.290    -.2386323    .0732426
+  _Istapost19_32 |   .0964246   .0671295     1.44   0.159    -.0395927    .2324418
+  _Istapost19_33 |   -.380544   .1117406    -3.41   0.002    -.6069519   -.1541361
+  _Istapost19_34 |  -.3456837   .1275096    -2.71   0.010    -.6040427   -.0873247
+  _Istapost19_35 |  -.0179892   .0923265    -0.19   0.847    -.2050605     .169082
+  _Istapost19_36 |   .0187419   .1499953     0.12   0.901    -.2851775    .3226613
+  _Istapost19_37 |   -.359354   .0630301    -5.70   0.000    -.4870651   -.2316429
+  _Istapost19_38 |  -.3504456    .064195    -5.46   0.000     -.480517   -.2203742
+  _Istapost19_39 |  -.4687486   .0536464    -8.74   0.000    -.5774466   -.3600506
+  _Istapost19_40 |  -.4397368   .0684321    -6.43   0.000    -.5783934   -.3010801
+  _Istapost19_41 |  -.4755219   .0943875    -5.04   0.000    -.6667692   -.2842746
+  _Istapost19_42 |  -.4740844   .0854169    -5.55   0.000    -.6471555   -.3010133
+  _Istapost19_43 |  -.1531603   .0512554    -2.99   0.005    -.2570135   -.0493071
+  _Istapost19_44 |  -.0003936   .0624716    -0.01   0.995    -.1269731    .1261859
+  _Istapost19_45 |    .013436   .0542489     0.25   0.806    -.0964828    .1233547
+  _Istapost19_46 |  -.0416339   .0624443    -0.67   0.509    -.1681581    .0848903
+  _Istapost19_47 |  -.2172563   .0952211    -2.28   0.028    -.4101927   -.0243199
+  _Istapost19_48 |  -.2124334   .0767448    -2.77   0.009    -.3679331   -.0569337
+  _Istapost19_49 |  -.7612691   .2026259    -3.76   0.001    -1.171828   -.3507101
+  _Istapost19_50 |  -.7778217   .1934819    -4.02   0.000    -1.169853   -.3857901
+  _Istapost19_51 |   .2264231   .1100587     2.06   0.047     .0034229    .4494232
+  _Istapost19_52 |  -.0437096   .1764707    -0.25   0.806    -.4012731     .313854
+  _Istapost19_53 |  -.4224562   .1394751    -3.03   0.004    -.7050596   -.1398528
+  _Istapost19_54 |  -.4292893   .1471845    -2.92   0.006    -.7275134   -.1310651
+  _Istapost19_55 |  -.4022421   .0886458    -4.54   0.000    -.5818556   -.2226286
+  _Istapost19_56 |  -.4071041   .1166626    -3.49   0.001    -.6434851   -.1707232
+  _Istapost19_57 |   .2229674   .1540214     1.45   0.156    -.0891097    .5350445
+  _Istapost19_58 |   .2938188   .1543788     1.90   0.065    -.0189825      .60662
+  _Istapost19_59 |  -.2534695   .0789631    -3.21   0.003     -.413464   -.0934751
+  _Istapost19_60 |  -.2981677   .1179981    -2.53   0.016    -.5372545   -.0590808
+  _Istapost19_61 |   -.095229   .0537521    -1.77   0.085    -.2041411    .0136832
+  _Istapost19_62 |  -.0599431   .0791381    -0.76   0.454    -.2202921    .1004059
+  _Istapost19_63 |   -.651792   .1746459    -3.73   0.001    -1.005658   -.2979257
+  _Istapost19_64 |  -.6410305   .1248907    -5.13   0.000     -.894083    -.387978
+  _Istapost19_65 |  -.2811799   .0527299    -5.33   0.000    -.3880209   -.1743389
+  _Istapost19_66 |  -.2618446   .0664763    -3.94   0.000    -.3965384   -.1271508
+  _Istapost19_67 |  -.1403801   .0851669    -1.65   0.108    -.3129447    .0321845
+  _Istapost19_68 |  -.1551192     .06663    -2.33   0.025    -.2901244    -.020114
+  _Istapost19_69 |  -.6251933   .0770303    -8.12   0.000    -.7812714   -.4691151
+  _Istapost19_70 |  -.5697543    .092294    -6.17   0.000    -.7567597    -.382749
+  _Istapost19_71 |  -.3012099   .0695831    -4.33   0.000    -.4421986   -.1602212
+  _Istapost19_72 |  -.2676812   .0701424    -3.82   0.000    -.4098032   -.1255591
+  _Istapost19_73 |  -.3858808   .0611944    -6.31   0.000    -.5098724   -.2618893
+  _Istapost19_74 |  -.3752215   .0751146    -5.00   0.000    -.5274181   -.2230249
+  _Istapost19_75 |  -.0117955   .0769144    -0.15   0.879    -.1676389    .1440479
+  _Istapost19_76 |  -.0113623   .0753923    -0.15   0.881    -.1641216    .1413969
+  _Istapost19_77 |  -.3359857   .1439749    -2.33   0.025    -.6277065   -.0442649
+  _Istapost19_78 |  -.3930548   .0704402    -5.58   0.000    -.5357802   -.2503293
+  _Istapost19_79 |    .213671   .0551349     3.88   0.000     .1019572    .3253848
+  _Istapost19_80 |   .2308883   .1121246     2.06   0.047     .0037023    .4580743
+  _Istapost19_81 |   .1952401   .1036658     1.88   0.068    -.0148068    .4052869
+  _Istapost19_82 |   .0645314    .090609     0.71   0.481    -.1190598    .2481226
+  _Istapost19_83 |  -.7406343   .2472599    -3.00   0.005     -1.24163   -.2396382
+  _Istapost19_84 |  -.7417814   .1676056    -4.43   0.000    -1.081383   -.4021802
+  _Istapost19_85 |  -.1860607   .1011103    -1.84   0.074    -.3909296    .0188083
+  _Istapost19_86 |  -.1001666   .0849192    -1.18   0.246    -.2722292    .0718959
+  _Istapost19_87 |   .0803536   .0598543     1.34   0.188    -.0409227      .20163
+  _Istapost19_88 |   .0891612   .0758741     1.18   0.247    -.0645744    .2428968
+  _Istapost19_89 |  -.3950494   .0659677    -5.99   0.000    -.5287126   -.2613863
+  _Istapost19_90 |  -.3669368   .0758973    -4.83   0.000    -.5207193   -.2131542
+  _Istapost19_91 |  -.1279661   .0551757    -2.32   0.026    -.2397627   -.0161695
+  _Istapost19_92 |  -.0948055   .0579958    -1.63   0.111    -.2123161    .0227051
+  _Istapost19_93 |   -.561344   .0625715    -8.97   0.000    -.6881259    -.434562
+  _Istapost19_94 |  -.5388195   .0681115    -7.91   0.000    -.6768264   -.4008125
+  _Istapost19_95 |  -.6835959   .2293933    -2.98   0.005    -1.148391   -.2188009
+  _Istapost19_96 |   -.594696   .2046335    -2.91   0.006    -1.009323   -.1800691
+        year1937 |  -.0392178   .0117128    -3.35   0.002    -.0629502   -.0154855
+    _IstaXyear_2 |  -.0181256   .0135556    -1.34   0.189    -.0455918    .0093406
+    _IstaXyear_3 |  -.0121971   .0401035    -0.30   0.763    -.0934546    .0690604
+    _IstaXyear_4 |  -.0589564   .0689653    -0.85   0.398    -.1986933    .0807805
+    _IstaXyear_5 |  -.0014586   .0081295    -0.18   0.859    -.0179306    .0150134
+    _IstaXyear_6 |  -.0028252   .0215992    -0.13   0.897    -.0465893    .0409389
+    _IstaXyear_7 |   -.021451   .0236601    -0.91   0.370     -.069391    .0264889
+    _IstaXyear_8 |  -.0000695   .0381195    -0.00   0.999     -.077307     .077168
+    _IstaXyear_9 |   -.037669   .0169621    -2.22   0.033    -.0720375   -.0033005
+   _IstaXyear_10 |  -.0390771   .0146214    -2.67   0.011    -.0687029   -.0094514
+   _IstaXyear_11 |  -.0344839    .012808    -2.69   0.011    -.0604353   -.0085324
+   _IstaXyear_12 |   .0101622   .0249697     0.41   0.686    -.0404313    .0607556
+   _IstaXyear_13 |  -.0214143    .015879    -1.35   0.186    -.0535882    .0107597
+   _IstaXyear_14 |   .0190146   .0191437     0.99   0.327    -.0197742    .0578033
+   _IstaXyear_15 |   -.004586   .0123843    -0.37   0.713     -.029679    .0205071
+   _IstaXyear_16 |   -.003445   .0177945    -0.19   0.848       -.0395    .0326101
+   _IstaXyear_17 |   -.000825   .0160548    -0.05   0.959     -.033355    .0317051
+   _IstaXyear_18 |  -.0193151   .0147779    -1.31   0.199     -.049258    .0106278
+   _IstaXyear_19 |  -.0065734   .0240498    -0.27   0.786     -.055303    .0421562
+   _IstaXyear_20 |  -.0232511   .0416796    -0.56   0.580     -.107702    .0611999
+   _IstaXyear_21 |   -.010913   .0121455    -0.90   0.375    -.0355221    .0136961
+   _IstaXyear_22 |  -.0024331   .0329037    -0.07   0.941    -.0691022    .0642361
+   _IstaXyear_23 |  -.0131564   .0110509    -1.19   0.241    -.0355477    .0092349
+   _IstaXyear_24 |   .0025771   .0168413     0.15   0.879    -.0315467    .0367008
+   _IstaXyear_25 |  -.0033729   .0242668    -0.14   0.890    -.0525421    .0457963
+   _IstaXyear_26 |  -.0185764   .0467675    -0.40   0.693    -.1133364    .0761835
+   _IstaXyear_27 |   .0102938    .020999     0.49   0.627    -.0322542    .0528418
+   _IstaXyear_28 |  -.0083348   .0278796    -0.30   0.767    -.0648242    .0481546
+   _IstaXyear_29 |  -.0021269   .0118877    -0.18   0.859    -.0262138    .0219599
+   _IstaXyear_30 |   .0051215   .0252086     0.20   0.840     -.045956     .056199
+   _IstaXyear_31 |  -.0087219   .0102285    -0.85   0.399    -.0294467     .012003
+   _IstaXyear_32 |  -.0148044   .0188473    -0.79   0.437    -.0529926    .0233839
+   _IstaXyear_33 |  -.0199928   .0181096    -1.10   0.277    -.0566863    .0167007
+   _IstaXyear_34 |   .0100305   .0308393     0.33   0.747    -.0524559    .0725169
+   _IstaXyear_35 |  -.0184685   .0157358    -1.17   0.248    -.0503522    .0134151
+   _IstaXyear_36 |   .0159331   .0383658     0.42   0.680    -.0618034    .0936696
+   _IstaXyear_37 |  -.0223747   .0124665    -1.79   0.081    -.0476343    .0028849
+   _IstaXyear_38 |   .0199335   .0154855     1.29   0.206     -.011443    .0513101
+   _IstaXyear_39 |   -.020271   .0123985    -1.63   0.111    -.0453928    .0048508
+   _IstaXyear_40 |   .0091602   .0159472     0.57   0.569    -.0231518    .0414723
+   _IstaXyear_41 |  -.0108252   .0143545    -0.75   0.456    -.0399102    .0182598
+   _IstaXyear_42 |  -.0048777    .021509    -0.23   0.822    -.0484591    .0387037
+   _IstaXyear_43 |  -.0172219   .0095295    -1.81   0.079    -.0365304    .0020866
+   _IstaXyear_44 |  -.0198725   .0175627    -1.13   0.265    -.0554579    .0157128
+   _IstaXyear_45 |   .0089534   .0084819     1.06   0.298    -.0082327    .0261394
+   _IstaXyear_46 |  -.0015939   .0139415    -0.11   0.910    -.0298419    .0266542
+   _IstaXyear_47 |   .0019169    .015222     0.13   0.900    -.0289257    .0327596
+   _IstaXyear_48 |   -.027141   .0199052    -1.36   0.181    -.0674728    .0131908
+   _IstaXyear_49 |  -.0060677   .0279662    -0.22   0.829    -.0627326    .0505973
+   _IstaXyear_50 |  -.0040618   .0514355    -0.08   0.937      -.10828    .1001563
+   _IstaXyear_51 |   .0056466   .0217798     0.26   0.797    -.0384835    .0497767
+   _IstaXyear_52 |    .028424   .0437098     0.65   0.520    -.0601406    .1169885
+   _IstaXyear_53 |  -.0260588   .0208171    -1.25   0.219    -.0682383    .0161207
+   _IstaXyear_54 |  -.0021681   .0411084    -0.05   0.958    -.0854616    .0811254
+   _IstaXyear_55 |  -.0237272   .0146278    -1.62   0.113     -.053366    .0059115
+   _IstaXyear_56 |   .0238829   .0307999     0.78   0.443    -.0385235    .0862894
+   _IstaXyear_57 |   -.033699   .0386413    -0.87   0.389    -.1119938    .0445958
+   _IstaXyear_58 |  -.0410824   .0369379    -1.11   0.273    -.1159257    .0337609
+   _IstaXyear_59 |  -.0158044   .0139307    -1.13   0.264    -.0440308    .0124219
+   _IstaXyear_60 |   .0001605   .0331464     0.00   0.996    -.0670005    .0673214
+   _IstaXyear_61 |  -.0044468   .0119935    -0.37   0.713     -.028748    .0198543
+   _IstaXyear_62 |  -.0292862   .0197997    -1.48   0.148    -.0694042    .0108319
+   _IstaXyear_63 |   -.003445   .0213768    -0.16   0.873    -.0467585    .0398685
+   _IstaXyear_64 |  -.0228545   .0291852    -0.78   0.439    -.0819894    .0362804
+   _IstaXyear_65 |  -.0132907   .0114992    -1.16   0.255    -.0365903    .0100089
+   _IstaXyear_66 |   .0058742   .0149803     0.39   0.697    -.0244787    .0362271
+   _IstaXyear_67 |   .0191312    .017811     1.07   0.290    -.0169574    .0552197
+   _IstaXyear_68 |  -.0076849    .019175    -0.40   0.691    -.0465372    .0311674
+   _IstaXyear_69 |  -.0191002   .0144102    -1.33   0.193     -.048298    .0100975
+   _IstaXyear_70 |   .0158808   .0338417     0.47   0.642    -.0526891    .0844506
+   _IstaXyear_71 |  -.0250089   .0143488    -1.74   0.090    -.0540823    .0040644
+   _IstaXyear_72 |   .0100738   .0164284     0.61   0.544    -.0232134     .043361
+   _IstaXyear_73 |  -.0275103   .0118064    -2.33   0.025    -.0514324   -.0035883
+   _IstaXyear_74 |   .0129974   .0190352     0.68   0.499    -.0255715    .0515663
+   _IstaXyear_75 |  -.0040114   .0128808    -0.31   0.757    -.0301103    .0220875
+   _IstaXyear_76 |  -.0162123   .0186993    -0.87   0.392    -.0541008    .0216761
+   _IstaXyear_77 |   .0235888   .0327506     0.72   0.476    -.0427702    .0899478
+   _IstaXyear_78 |  -.0204289   .0147649    -1.38   0.175    -.0503454    .0094876
+   _IstaXyear_79 |  -.0003244   .0108955    -0.03   0.976    -.0224008     .021752
+   _IstaXyear_80 |  -.0089734   .0332266    -0.27   0.789    -.0762969    .0583501
+   _IstaXyear_81 |   .0823239   .0395954     2.08   0.045     .0020961    .1625517
+   _IstaXyear_82 |  -.0266059    .027959    -0.95   0.347    -.0832562    .0300445
+   _IstaXyear_83 |  -.0114714   .0339989    -0.34   0.738    -.0803596    .0574168
+   _IstaXyear_84 |  -.0474334   .0459054    -1.03   0.308    -.1404466    .0455797
+   _IstaXyear_85 |  -.0100375   .0169563    -0.59   0.557    -.0443942    .0243191
+   _IstaXyear_86 |  -.0318682   .0223408    -1.43   0.162     -.077135    .0133986
+   _IstaXyear_87 |  -.0001043    .013364    -0.01   0.994    -.0271824    .0269738
+   _IstaXyear_88 |  -.0096339   .0211011    -0.46   0.651    -.0523887    .0331209
+   _IstaXyear_89 |  -.0062847   .0150537    -0.42   0.679    -.0367864    .0242169
+   _IstaXyear_90 |   .0139802   .0176827     0.79   0.434    -.0218484    .0498089
+   _IstaXyear_91 |   .0055875   .0109263     0.51   0.612    -.0165513    .0277264
+   _IstaXyear_92 |  -.0144769   .0131462    -1.10   0.278    -.0411136    .0121598
+   _IstaXyear_93 |  -.0244201   .0119229    -2.05   0.048    -.0485782   -.0002619
+   _IstaXyear_94 |  -.0089442   .0168993    -0.53   0.600    -.0431854     .025297
+   _IstaXyear_95 |   -.005664   .0309468    -0.18   0.856    -.0683682    .0570401
+   _IstaXyear_96 |  -.0463956   .0583494    -0.80   0.432    -.1646228    .0718316
+         treated |   .7917585   .0814743     9.72   0.000     .6266759     .956841
+treatedxpost1937 |  -.0412679   .1280415    -0.32   0.749    -.3007047    .2181688
+    treatedxyear |   .0283925   .0121231     2.34   0.025     .0038288    .0529562
+ treatxpostxyear |  -.0766646   .0324431    -2.36   0.023    -.1424007   -.0109286
+           _cons |  -7.442833   .0553452  -134.48   0.000    -7.554973   -7.330693
+----------------------------------------------------------------------------------
+
+. 
+. eststo
+(est4 stored)
+
+. 
+. xi: areg logmortality year1937 treated treatedxpost1937 treatedxyear if disease == 1|disease == 3, absorb(stapost1937
+> ) cluster(diseaseyear)
+
+Linear regression, absorbing indicators            Number of obs     =   1,721
+Absorbed variable: stapost1937                     No. of categories =      96
+                                                   F(4, 37)          = 2174.13
+                                                   Prob > F          =  0.0000
+                                                   R-squared         =  0.9323
+                                                   Adj R-squared     =  0.9281
+                                                   Root MSE          =  0.5594
+
+                               (Std. err. adjusted for 38 clusters in diseaseyear)
+----------------------------------------------------------------------------------
+                 |               Robust
+    logmortality | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-----------------+----------------------------------------------------------------
+        year1937 |  -.0476142   .0030803   -15.46   0.000    -.0538555   -.0413729
+         treated |  -3.631104   .1384041   -26.24   0.000    -3.911538   -3.350671
+treatedxpost1937 |  -.7334423   .2664619    -2.75   0.009    -1.273345   -.1935392
+    treatedxyear |   -.013917   .0191503    -0.73   0.472    -.0527191    .0248851
+           _cons |  -7.677856   .0088468  -867.87   0.000    -7.695781   -7.659931
+----------------------------------------------------------------------------------
+
+. 
+. eststo
+(est5 stored)
+
+. 
+. xi: reg logmortality i.stapost1937*year1937 treated treatedxpost1937 treatedxyear treatxpostxyear if disease == 1|dis
+> ease == 3, cluster(diseaseyear)
+i.stapost1937     _Istapost19_1-96    (naturally coded; _Istapost19_1 omitted)
+i.s~1937*y~1937   _IstaXyear_#        (coded as above)
+
+Linear regression                               Number of obs     =      1,721
+                                                F(35, 37)         =          .
+                                                Prob > F          =          .
+                                                R-squared         =     0.9400
+                                                Root MSE          =     .54305
+
+                               (Std. err. adjusted for 38 clusters in diseaseyear)
+----------------------------------------------------------------------------------
+                 |               Robust
+    logmortality | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-----------------+----------------------------------------------------------------
+   _Istapost19_2 |   .3347939   .4444961     0.75   0.456    -.5658406    1.235428
+   _Istapost19_3 |   1.291578   .1926758     6.70   0.000     .9011801    1.681976
+   _Istapost19_4 |   1.059524    .640459     1.65   0.107    -.2381689    2.357217
+   _Istapost19_5 |  -.0525891   .1529568    -0.34   0.733     -.362509    .2573308
+   _Istapost19_6 |  -.1024162   .5016001    -0.20   0.839    -1.118755    .9139222
+   _Istapost19_7 |   .3650621   .2520599     1.45   0.156    -.1456597     .875784
+   _Istapost19_8 |   .2585092   .4129397     0.63   0.535     -.578186    1.095204
+   _Istapost19_9 |   1.278234   .6270244     2.04   0.049     .0077616    2.548706
+  _Istapost19_10 |   .6368175   .3536531     1.80   0.080    -.0797516    1.353387
+  _Istapost19_11 |  -.1334199   .2855172    -0.47   0.643    -.7119327    .4450929
+  _Istapost19_12 |  -.1269715   .3944739    -0.32   0.749    -.9262515    .6723086
+  _Istapost19_13 |   .2193011    .329514     0.67   0.510    -.4483577    .8869599
+  _Istapost19_14 |   .1351044   .4327082     0.31   0.757    -.7416457    1.011855
+  _Istapost19_15 |  -.9922024    .374979    -2.65   0.012    -1.751982   -.2324228
+  _Istapost19_16 |  -.5047897   .6191896    -0.82   0.420    -1.759387    .7498075
+  _Istapost19_17 |  -.2305775   .1408499    -1.64   0.110    -.5159664    .0548115
+  _Istapost19_18 |   .1330924    .434349     0.31   0.761    -.7469822    1.013167
+  _Istapost19_19 |    .507376   .8120544     0.62   0.536    -1.138002    2.152754
+  _Istapost19_20 |   .0147168   .4893149     0.03   0.976    -.9767294    1.006163
+  _Istapost19_21 |   .8348498   .5096437     1.64   0.110    -.1977865    1.867486
+  _Istapost19_22 |   .7569244   .3771374     2.01   0.052    -.0072286    1.521077
+  _Istapost19_23 |   .7544112   .4982037     1.51   0.138    -.2550455    1.763868
+  _Istapost19_24 |   .9070725   .4309081     2.11   0.042     .0339697    1.780175
+  _Istapost19_25 |   .2346548   .5976556     0.39   0.697    -.9763104     1.44562
+  _Istapost19_26 |   .4512169   .5951938     0.76   0.453    -.7547602    1.657194
+  _Istapost19_27 |   .2960044   .5914442     0.50   0.620    -.9023754    1.494384
+  _Istapost19_28 |   .3960672   .5301831     0.75   0.460    -.6781859     1.47032
+  _Istapost19_29 |   .7959676   .3190794     2.49   0.017     .1494513    1.442484
+  _Istapost19_30 |   .8696733   .3475524     2.50   0.017     .1654652    1.573881
+  _Istapost19_31 |   -.286868   .1860553    -1.54   0.132    -.6638518    .0901158
+  _Istapost19_32 |  -.0120458   .4850666    -0.02   0.980    -.9948842    .9707925
+  _Istapost19_33 |  -.0728458   .3224648    -0.23   0.823    -.7262216    .5805299
+  _Istapost19_34 |  -.1673901    .359257    -0.47   0.644     -.895314    .5605337
+  _Istapost19_35 |   .5721456   .2222963     2.57   0.014     .1217305    1.022561
+  _Istapost19_36 |   .4332172   .4298776     1.01   0.320    -.4377975    1.304232
+  _Istapost19_37 |   .2487421   .3403843     0.73   0.470    -.4409421    .9384262
+  _Istapost19_38 |   .1172604   .3495662     0.34   0.739    -.5910279    .8255488
+  _Istapost19_39 |   .3860534   .4776572     0.81   0.424     -.581772    1.353879
+  _Istapost19_40 |   .7669682   .4281046     1.79   0.081    -.1004542    1.634391
+  _Istapost19_41 |    .063659   .5629072     0.11   0.911    -1.076899    1.204217
+  _Istapost19_42 |   .2583541   .3790937     0.68   0.500    -.5097626    1.026471
+  _Istapost19_43 |   -.120799   .2102885    -0.57   0.569    -.5468841    .3052861
+  _Istapost19_44 |  -.4921325   .5856255    -0.84   0.406    -1.678722    .6944574
+  _Istapost19_45 |   .6561321   .3771885     1.74   0.090    -.1081244    1.420389
+  _Istapost19_46 |    .807615   .3949961     2.04   0.048      .007277    1.607953
+  _Istapost19_47 |   .5845431   .6055134     0.97   0.341    -.6423437     1.81143
+  _Istapost19_48 |    .754064   .4012266     1.88   0.068    -.0588984    1.567026
+  _Istapost19_49 |    .197016   .6769233     0.29   0.773    -1.174561    1.568593
+  _Istapost19_50 |   .2386295   .5455305     0.44   0.664    -.8667202    1.343979
+  _Istapost19_51 |   1.005536   .5312992     1.89   0.066    -.0709783     2.08205
+  _Istapost19_52 |   .8012571   .3614457     2.22   0.033     .0688986    1.533616
+  _Istapost19_53 |  -.0066347   .4928914    -0.01   0.989    -1.005327    .9920581
+  _Istapost19_54 |   .1026867   .4015819     0.26   0.800    -.7109956    .9163689
+  _Istapost19_55 |   .0706528    .231958     0.30   0.762    -.3993389    .5406444
+  _Istapost19_56 |  -.1349441   .4329767    -0.31   0.757    -1.012238    .7423501
+  _Istapost19_57 |   1.121447   .3788603     2.96   0.005     .3538034    1.889091
+  _Istapost19_58 |   .7703299    .384618     2.00   0.053    -.0089801     1.54964
+  _Istapost19_59 |   .3779613   .2882159     1.31   0.198    -.2060196    .9619423
+  _Istapost19_60 |   .1613653   .3745175     0.43   0.669    -.5974792    .9202099
+  _Istapost19_61 |   .1587141   .1844729     0.86   0.395    -.2150635    .5324917
+  _Istapost19_62 |   .1873495   .3868948     0.48   0.631    -.5965739    .9712728
+  _Istapost19_63 |    .021187    .694748     0.03   0.976    -1.386506     1.42888
+  _Istapost19_64 |   .4416503   .4985925     0.89   0.381    -.5685941    1.451895
+  _Istapost19_65 |   .6720332   .4563578     1.47   0.149    -.2526356    1.596702
+  _Istapost19_66 |    .584662   .3662666     1.60   0.119    -.1574646    1.326789
+  _Istapost19_67 |   .1874377   .3262738     0.57   0.569    -.4736558    .8485312
+  _Istapost19_68 |   .5404586   .3514162     1.54   0.133    -.1715783    1.252495
+  _Istapost19_69 |    .110456   .4680678     0.24   0.815    -.8379394    1.058851
+  _Istapost19_70 |   .0764371   .3799592     0.20   0.842    -.6934334    .8463076
+  _Istapost19_71 |   .3961747   .3929417     1.01   0.320    -.4000007     1.19235
+  _Istapost19_72 |   .5180916   .3573458     1.45   0.156    -.2059597    1.242143
+  _Istapost19_73 |   .0511549   .3378903     0.15   0.880    -.6334758    .7357857
+  _Istapost19_74 |   .1493488   .3904066     0.38   0.704    -.6416902    .9403878
+  _Istapost19_75 |  -.0331524   .2010571    -0.16   0.870    -.4405328    .3742279
+  _Istapost19_76 |  -.0610004   .4457276    -0.14   0.892    -.9641303    .8421294
+  _Istapost19_77 |   .7095171   .6828914     1.04   0.306    -.6741522    2.093186
+  _Istapost19_78 |   .5813945   .4405659     1.32   0.195    -.3112768    1.474066
+  _Istapost19_79 |   .4551022   .1518481     3.00   0.005     .1474287    .7627756
+  _Istapost19_80 |   .5640657   .4046026     1.39   0.172     -.255737    1.383868
+  _Istapost19_81 |   .2674713     .27257     0.98   0.333     -.284808    .8197506
+  _Istapost19_82 |   .3019727    .410161     0.74   0.466    -.5290924    1.133038
+  _Istapost19_83 |   .6406352   .8368662     0.77   0.449    -1.055017    2.336287
+  _Istapost19_84 |   .1166329   .4554743     0.26   0.799    -.8062457    1.039512
+  _Istapost19_85 |   .1396207   .3515507     0.40   0.694    -.5726887    .8519301
+  _Istapost19_86 |   .0083901   .4726524     0.02   0.986    -.9492946    .9660747
+  _Istapost19_87 |   .3920676     .20565     1.91   0.064    -.0246189    .8087542
+  _Istapost19_88 |   .0553285   .4771006     0.12   0.908    -.9113691    1.022026
+  _Istapost19_89 |   .1140194   .3395018     0.34   0.739    -.5738766    .8019154
+  _Istapost19_90 |   .1666123   .3561755     0.47   0.643    -.5550678    .8882923
+  _Istapost19_91 |   .6770241   .4698649     1.44   0.158    -.2750127    1.629061
+  _Istapost19_92 |   .8350306   .3836847     2.18   0.036     .0576115     1.61245
+  _Istapost19_93 |   .3586778   .5626683     0.64   0.528    -.7813965    1.498752
+  _Istapost19_94 |    .460206   .4372345     1.05   0.299    -.4257152    1.346127
+  _Istapost19_95 |   .4553229   .8568396     0.53   0.598    -1.280799    2.191445
+  _Istapost19_96 |   .3932908   .6012903     0.65   0.517     -.825039    1.611621
+        year1937 |  -.0601818   .0547494    -1.10   0.279    -.1711145     .050751
+    _IstaXyear_2 |  -.0191926   .1060703    -0.18   0.857    -.2341115    .1957263
+    _IstaXyear_3 |   .0382265    .036375     1.05   0.300    -.0354762    .1119292
+    _IstaXyear_4 |   .0006155   .1500332     0.00   0.997    -.3033806    .3046116
+    _IstaXyear_5 |  -.0015929   .0215713    -0.07   0.942    -.0453006    .0421147
+    _IstaXyear_6 |   .0112527   .1273662     0.09   0.930    -.2468156    .2693211
+    _IstaXyear_7 |    .019116   .0441007     0.43   0.667    -.0702406    .1084726
+    _IstaXyear_8 |  -.0281178   .0909949    -0.31   0.759    -.2124909    .1562554
+    _IstaXyear_9 |   .0790554   .0972107     0.81   0.421    -.1179121     .276023
+   _IstaXyear_10 |   .0472363   .0709369     0.67   0.510    -.0964954    .1909681
+   _IstaXyear_11 |  -.0224494   .0472356    -0.48   0.637    -.1181578    .0732589
+   _IstaXyear_12 |   .0189073   .0846004     0.22   0.824    -.1525094     .190324
+   _IstaXyear_13 |  -.0058022   .0549576    -0.11   0.916     -.117157    .1055525
+   _IstaXyear_14 |   .1436635   .0964505     1.49   0.145    -.0517639    .3390908
+   _IstaXyear_15 |  -.0689437   .0503308    -1.37   0.179    -.1709236    .0330362
+   _IstaXyear_16 |   .1038565   .1315476     0.79   0.435    -.1626843    .3703973
+   _IstaXyear_17 |   -.040123   .0272526    -1.47   0.149     -.095342    .0150961
+   _IstaXyear_18 |   .0111277   .0999182     0.11   0.912    -.1913259    .2135813
+   _IstaXyear_19 |   .0561141   .1137351     0.49   0.625    -.1743351    .2865633
+   _IstaXyear_20 |   .0323537    .119344     0.27   0.788    -.2094603    .2741677
+   _IstaXyear_21 |   .0408255   .0699576     0.58   0.563    -.1009221    .1825731
+   _IstaXyear_22 |  -.0301636   .0647768    -0.47   0.644    -.1614138    .1010866
+   _IstaXyear_23 |   .0339351   .0701066     0.48   0.631    -.1081142    .1759845
+   _IstaXyear_24 |  -.0540186   .0800902    -0.67   0.504    -.2162968    .1082597
+   _IstaXyear_25 |   .0420781   .0824532     0.51   0.613     -.124988    .2091441
+   _IstaXyear_26 |  -.0655044    .134397    -0.49   0.629    -.3378186    .2068097
+   _IstaXyear_27 |   .0368755    .084932     0.43   0.667     -.135213     .208964
+   _IstaXyear_28 |  -.0185649   .1234894    -0.15   0.881    -.2687783    .2316484
+   _IstaXyear_29 |   .0304451    .049947     0.61   0.546    -.0707572    .1316474
+   _IstaXyear_30 |    .043342   .0621446     0.70   0.490    -.0825749    .1692589
+   _IstaXyear_31 |  -.0045991   .0286725    -0.16   0.873    -.0626951    .0534969
+   _IstaXyear_32 |   .0033628   .1218548     0.03   0.978    -.2435385     .250264
+   _IstaXyear_33 |  -.0322352   .0571439    -0.56   0.576    -.1480197    .0835494
+   _IstaXyear_34 |   .1122567   .0688794     1.63   0.112    -.0273062    .2518197
+   _IstaXyear_35 |   .0383809   .0384503     1.00   0.325    -.0395268    .1162886
+   _IstaXyear_36 |  -.0121238   .1000252    -0.12   0.904     -.214794    .1905465
+   _IstaXyear_37 |  -.0129264    .055261    -0.23   0.816    -.1248958    .0990431
+   _IstaXyear_38 |   .0654729   .0575915     1.14   0.263    -.0512186    .1821643
+   _IstaXyear_39 |  -.0110939   .0725702    -0.15   0.879    -.1581352    .1359474
+   _IstaXyear_40 |  -.0694757   .0799611    -0.87   0.391    -.2314922    .0925408
+   _IstaXyear_41 |  -.0235997    .081876    -0.29   0.775    -.1894962    .1422969
+   _IstaXyear_42 |  -.0093739    .067582    -0.14   0.890     -.146308    .1275602
+   _IstaXyear_43 |   .0160476   .0462101     0.35   0.730    -.0775829     .109678
+   _IstaXyear_44 |   .1506635   .1090767     1.38   0.175    -.0703468    .3716737
+   _IstaXyear_45 |   .0261111   .0591152     0.44   0.661    -.0936676    .1458899
+   _IstaXyear_46 |  -.0465558   .0726596    -0.64   0.526     -.193778    .1006665
+   _IstaXyear_47 |    .020996   .0847387     0.25   0.806    -.1507009    .1926929
+   _IstaXyear_48 |   .0093586   .0777278     0.12   0.905    -.1481328      .16685
+   _IstaXyear_49 |   .0443104   .0924348     0.48   0.634    -.1429803    .2316011
+   _IstaXyear_50 |  -.0228879   .1222465    -0.19   0.853     -.270583    .2248071
+   _IstaXyear_51 |   .0775155   .0872195     0.89   0.380     -.099208    .2542389
+   _IstaXyear_52 |   .0683054   .0796987     0.86   0.397    -.0931795    .2297904
+   _IstaXyear_53 |  -.0333854   .0739462    -0.45   0.654    -.1832147     .116444
+   _IstaXyear_54 |   .0284553   .0828607     0.34   0.733    -.1394364     .196347
+   _IstaXyear_55 |  -.0129019   .0451991    -0.29   0.777     -.104484    .0786803
+   _IstaXyear_56 |   .1055167   .0822364     1.28   0.207      -.06111    .2721434
+   _IstaXyear_57 |   .0760396   .0844378     0.90   0.374    -.0950475    .2471268
+   _IstaXyear_58 |  -.0379649    .078827    -0.48   0.633    -.1976836    .1217537
+   _IstaXyear_59 |   .0239168   .0482313     0.50   0.623    -.0738091    .1216428
+   _IstaXyear_60 |   .0262796    .070079     0.38   0.710    -.1157139    .1682732
+   _IstaXyear_61 |   .0083955   .0387775     0.22   0.830    -.0701751    .0869661
+   _IstaXyear_62 |   .0371611   .0680519     0.55   0.588    -.1007251    .1750473
+   _IstaXyear_63 |  -.0230603   .0996939    -0.23   0.818    -.2250594    .1789389
+   _IstaXyear_64 |  -.1049961   .0977502    -1.07   0.290    -.3030568    .0930646
+   _IstaXyear_65 |   .0310276   .0650314     0.48   0.636    -.1007385    .1627937
+   _IstaXyear_66 |   .0027435   .0620642     0.04   0.965    -.1230104    .1284975
+   _IstaXyear_67 |    .009503   .0573361     0.17   0.869    -.1066709    .1256769
+   _IstaXyear_68 |  -.0655209   .0683341    -0.96   0.344     -.203979    .0729373
+   _IstaXyear_69 |   .0104733   .0656348     0.16   0.874    -.1225155    .1434621
+   _IstaXyear_70 |   .0206132   .0810115     0.25   0.801    -.1435317     .184758
+   _IstaXyear_71 |   .0038354   .0604645     0.06   0.950    -.1186772    .1263481
+   _IstaXyear_72 |  -.0154013   .0597225    -0.26   0.798    -.1364106     .105608
+   _IstaXyear_73 |  -.0038993   .0577463    -0.07   0.947    -.1209044    .1131059
+   _IstaXyear_74 |   .0251375   .0716714     0.35   0.728    -.1200827    .1703576
+   _IstaXyear_75 |   .0286977   .0423882     0.68   0.503    -.0571889    .1145844
+   _IstaXyear_76 |   .0157046    .098312     0.16   0.874    -.1834944    .2149035
+   _IstaXyear_77 |   .1672016   .1359883     1.23   0.227    -.1083369    .4427401
+   _IstaXyear_78 |  -.0808553    .096892    -0.83   0.409    -.2771772    .1154666
+   _IstaXyear_79 |  -.0070814   .0237493    -0.30   0.767    -.0552021    .0410393
+   _IstaXyear_80 |   .0574228    .078157     0.73   0.467    -.1009384     .215784
+   _IstaXyear_81 |   .0225981   .1092222     0.21   0.837    -.1987072    .2439034
+   _IstaXyear_82 |  -.0182929   .0910331    -0.20   0.842    -.2027435    .1661578
+   _IstaXyear_83 |   .1009153   .1094624     0.92   0.363    -.1208766    .3227071
+   _IstaXyear_84 |  -.0511403   .1030898    -0.50   0.623    -.2600201    .1577395
+   _IstaXyear_85 |  -.0240081   .0568187    -0.42   0.675    -.1391337    .0911174
+   _IstaXyear_86 |   .1007605   .0934545     1.08   0.288    -.0885963    .2901174
+   _IstaXyear_87 |   .0180635   .0362293     0.50   0.621    -.0553441    .0914711
+   _IstaXyear_88 |    .123429   .0945376     1.31   0.200    -.0681223    .3149804
+   _IstaXyear_89 |   .0163646   .0543135     0.30   0.765    -.0936851    .1264142
+   _IstaXyear_90 |   .0485275   .0605976     0.80   0.428     -.074255      .17131
+   _IstaXyear_91 |    .037726   .0673687     0.56   0.579    -.0987759     .174228
+   _IstaXyear_92 |  -.0299168   .0662774    -0.45   0.654    -.1642075    .1043739
+   _IstaXyear_93 |   .0150245   .0785565     0.19   0.849     -.144146     .174195
+   _IstaXyear_94 |   .0086596   .0941865     0.09   0.927    -.1821803    .1994995
+   _IstaXyear_95 |   .0331074    .116205     0.28   0.777    -.2023463    .2685611
+   _IstaXyear_96 |  -.0334522   .1559577    -0.21   0.831    -.3494525     .282548
+         treated |  -3.428809   .0497438   -68.93   0.000    -3.529599   -3.328018
+treatedxpost1937 |  -.4884974   .1071281    -4.56   0.000    -.7055595   -.2714353
+    treatedxyear |   .0187283   .0079046     2.37   0.023      .002712    .0347445
+ treatxpostxyear |  -.1844495   .0357092    -5.17   0.000    -.2568033   -.1120958
+           _cons |  -7.987792   .3433858   -23.26   0.000    -8.683558   -7.292026
+----------------------------------------------------------------------------------
+
+. 
+. eststo
+(est6 stored)
+
+. 
+end of do-file
+
+. esttab using "rt4_B.tex"
+(output written to rt4_B.tex)
+
+. eststo clear
+
+. do "C:\Users\franc\AppData\Local\Temp\STD3e8_000000.tmp"
+
+. clear all
+
+. use "state_data"
+
+. 
+. drop if year > 1943 | year < 1925
+(515 observations deleted)
+
+. drop if year >= 1935 & year <= 1937
+(144 observations deleted)
+
+. rename tb_rate d1
+
+. rename mmr d2
+
+. rename scarfever_rate d3
+
+. rename infl_pneumonia_rate d4
+
+. 
+. reshape long d, i(state year) j(disease) 
+(j = 1 2 3 4)
+
+Data                               Wide   ->   Long
+-----------------------------------------------------------------------------
+Number of observations              737   ->   2,948       
+Number of variables                  17   ->   15          
+j variable (4 values)                     ->   disease
+xij variables:
+                           d1 d2 ... d4   ->   d
+-----------------------------------------------------------------------------
+
+. gen treated = 1
+
+. replace treated = 0 if disease == 1
+(737 real changes made)
+
+. rename d mortality
+
+. gen logmortality = ln(mortality)
+(67 missing values generated)
+
+. 
+. gen year1937 = year - 1937
+
+. gen post1937 = 0
+
+. replace post1937 = 1 if year > 1936
+(1,152 real changes made)
+
+. 
+. gen treatedxyear = treated*year1937
+
+. gen treatedxpost1937 = treated*post1937
+
+. gen treatxpostxyear = treated*post1937*year1937
+
+. 
+. egen stapost1937=group(state post1937)
+
+. xi i.stapost1937*year1937
+i.stapost1937     _Istapost19_1-96    (naturally coded; _Istapost19_1 omitted)
+i.s~1937*y~1937   _IstaXyear_#        (coded as above)
+
+. egen diseaseyear=group(disease year1937)
+
+. 
+. xi: areg logmortality year1937 treated treatedxpost1937 treatedxyear if disease == 1|disease == 2, absorb(stapost1937
+> ) cluster(diseaseyear)
+
+Linear regression, absorbing indicators          Number of obs     =     1,448
+Absorbed variable: stapost1937                   No. of categories =        96
+                                                 F(4, 31)          = 113148.96
+                                                 Prob > F          =    0.0000
+                                                 R-squared         =    0.9989
+                                                 Adj R-squared     =    0.9988
+                                                 Root MSE          =    0.2385
+
+                               (Std. err. adjusted for 32 clusters in diseaseyear)
+----------------------------------------------------------------------------------
+                 |               Robust
+    logmortality | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-----------------+----------------------------------------------------------------
+        year1937 |  -.0505408    .003359   -15.05   0.000    -.0573916     -.04369
+         treated |   13.85756   .0839491   165.07   0.000     13.68634    14.02877
+treatedxpost1937 |  -.2878814   .1344726    -2.14   0.040    -.5621401   -.0136227
+    treatedxyear |   .0045064   .0117845     0.38   0.705    -.0195281     .028541
+           _cons |  -7.688927   .0123142  -624.40   0.000    -7.714042   -7.663812
+----------------------------------------------------------------------------------
+
+. 
+. eststo
+(est1 stored)
+
+. 
+. xi: reg logmortality i.stapost1937*year1937 treated treatedxpost1937 treatedxyear treatxpostxyear if disease == 1|dis
+> ease == 2, cluster(diseaseyear)
+i.stapost1937     _Istapost19_1-96    (naturally coded; _Istapost19_1 omitted)
+i.s~1937*y~1937   _IstaXyear_#        (coded as above)
+
+Linear regression                               Number of obs     =      1,448
+                                                F(29, 31)         =          .
+                                                Prob > F          =          .
+                                                R-squared         =     0.9990
+                                                Root MSE          =     .23173
+
+                               (Std. err. adjusted for 32 clusters in diseaseyear)
+----------------------------------------------------------------------------------
+                 |               Robust
+    logmortality | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-----------------+----------------------------------------------------------------
+   _Istapost19_2 |   .2149811   .0999817     2.15   0.039     .0110671     .418895
+   _Istapost19_3 |   .5443113   .4666312     1.17   0.252    -.4073893    1.496012
+   _Istapost19_4 |   .6546039   .4690207     1.40   0.173    -.3019702    1.611178
+   _Istapost19_5 |  -.1812464   .0864089    -2.10   0.044    -.3574785   -.0050142
+   _Istapost19_6 |   -.015993   .0883129    -0.18   0.857    -.1961084    .1641224
+   _Istapost19_7 |  -.1711184   .1873566    -0.91   0.368    -.5532347    .2109978
+   _Istapost19_8 |  -.1852157    .210547    -0.88   0.386     -.614629    .2441977
+   _Istapost19_9 |  -.0753263   .1567361    -0.48   0.634    -.3949916     .244339
+  _Istapost19_10 |   .1072545   .1143469     0.94   0.356    -.1259576    .3404666
+  _Istapost19_11 |  -.4149509   .0867586    -4.78   0.000    -.5918963   -.2380055
+  _Istapost19_12 |  -.5291759   .1251821    -4.23   0.000    -.7844864   -.2738653
+  _Istapost19_13 |  -.0593406   .0738546    -0.80   0.428     -.209968    .0912867
+  _Istapost19_14 |   .1091525   .1070764     1.02   0.316    -.1092314    .3275363
+  _Istapost19_15 |   .1144108   .1626436     0.70   0.487     -.217303    .4461246
+  _Istapost19_16 |   .2243225   .1499583     1.50   0.145    -.0815194    .5301643
+  _Istapost19_17 |  -.0832418   .1315162    -0.63   0.531    -.3514708    .1849873
+  _Istapost19_18 |   .0937838    .127224     0.74   0.467    -.1656914    .3532589
+  _Istapost19_19 |  -.5329277   .2274631    -2.34   0.026    -.9968417   -.0690137
+  _Istapost19_20 |  -.7298914    .255358    -2.86   0.008    -1.250697   -.2090853
+  _Istapost19_21 |  -.2651945   .0725272    -3.66   0.001    -.4131147   -.1172744
+  _Istapost19_22 |  -.2834975   .1227294    -2.31   0.028    -.5338058   -.0331891
+  _Istapost19_23 |  -.1760533   .0711438    -2.47   0.019     -.321152   -.0309547
+  _Istapost19_24 |  -.2800942   .0814492    -3.44   0.002     -.446211   -.1139773
+  _Istapost19_25 |  -.6292848   .2335523    -2.69   0.011    -1.105618   -.1529517
+  _Istapost19_26 |  -.6919024   .2205267    -3.14   0.004    -1.141669   -.2421353
+  _Istapost19_27 |  -.4696073   .2366624    -1.98   0.056    -.9522834    .0130688
+  _Istapost19_28 |  -.4886871   .2234412    -2.19   0.036    -.9443985   -.0329757
+  _Istapost19_29 |   .0099161   .1577495     0.06   0.950    -.3118161    .3316483
+  _Istapost19_30 |   .0675433    .187466     0.36   0.721     -.314796    .4498827
+  _Istapost19_31 |   .0592774   .0708591     0.84   0.409    -.0852406    .2037954
+  _Istapost19_32 |   .1778528   .0780265     2.28   0.030     .0187168    .3369888
+  _Istapost19_33 |  -.2868302   .1558225    -1.84   0.075    -.6046323    .0309719
+  _Istapost19_34 |  -.3206767   .1444792    -2.22   0.034    -.6153439   -.0260094
+  _Istapost19_35 |   -.053243    .174054    -0.31   0.762    -.4082284    .3017424
+  _Istapost19_36 |   .0475795   .2538438     0.19   0.853    -.4701382    .5652973
+  _Istapost19_37 |  -.2353404   .0760521    -3.09   0.004    -.3904496   -.0802311
+  _Istapost19_38 |  -.3313101   .0876314    -3.78   0.001    -.5100356   -.1525846
+  _Istapost19_39 |    -.26808   .0947522    -2.83   0.008    -.4613284   -.0748315
+  _Istapost19_40 |  -.3815397   .0796239    -4.79   0.000    -.5439337   -.2191457
+  _Istapost19_41 |  -.5871752   .0952693    -6.16   0.000    -.7814781   -.3928722
+  _Istapost19_42 |  -.5645873   .0805968    -7.01   0.000    -.7289655   -.4002091
+  _Istapost19_43 |  -.0664001   .0664121    -1.00   0.325    -.2018484    .0690482
+  _Istapost19_44 |   .0745357   .1127061     0.66   0.513    -.1553299    .3044014
+  _Istapost19_45 |  -.1085747   .0607287    -1.79   0.084    -.2324317    .0152824
+  _Istapost19_46 |  -.1686292   .0939756    -1.79   0.083    -.3602937    .0230354
+  _Istapost19_47 |  -.2284709   .0806065    -2.83   0.008     -.392869   -.0640729
+  _Istapost19_48 |   -.303458   .1134006    -2.68   0.012    -.5347401   -.0721759
+  _Istapost19_49 |   -.759846    .291681    -2.61   0.014    -1.354733   -.1649586
+  _Istapost19_50 |  -.7247848   .2767969    -2.62   0.014    -1.289316   -.1602539
+  _Istapost19_51 |   .1843005    .215453     0.86   0.399    -.2551188    .6237199
+  _Istapost19_52 |   .3519557   .2202337     1.60   0.120    -.0972139    .8011253
+  _Istapost19_53 |  -.4051117   .1613901    -2.51   0.017     -.734269   -.0759544
+  _Istapost19_54 |  -.4799568    .156466    -3.07   0.004    -.7990714   -.1608423
+  _Istapost19_55 |  -.2211876   .0663998    -3.33   0.002    -.3566109   -.0857643
+  _Istapost19_56 |  -.2806354   .1141747    -2.46   0.020    -.5134961   -.0477746
+  _Istapost19_57 |   .2168954   .3196759     0.68   0.502    -.4350878    .8688786
+  _Istapost19_58 |   .2565108   .1672629     1.53   0.135    -.0846242    .5976458
+  _Istapost19_59 |   -.147619   .0717769    -2.06   0.048    -.2940089   -.0012291
+  _Istapost19_60 |  -.2496417   .1271666    -1.96   0.059    -.5089997    .0097164
+  _Istapost19_61 |  -.0271721    .072198    -0.38   0.709     -.174421    .1200767
+  _Istapost19_62 |   .0500268   .0809737     0.62   0.541    -.1151201    .2151737
+  _Istapost19_63 |  -.7410666   .2060493    -3.60   0.001    -1.161307   -.3208263
+  _Istapost19_64 |   -.997922    .154787    -6.45   0.000    -1.313612    -.682232
+  _Istapost19_65 |  -.1818139   .0733721    -2.48   0.019    -.3314573   -.0321705
+  _Istapost19_66 |  -.2497761   .0833932    -3.00   0.005    -.4198576   -.0796946
+  _Istapost19_67 |  -.1959916     .12919    -1.52   0.139    -.4594762    .0674931
+  _Istapost19_68 |  -.1607474   .0762562    -2.11   0.043    -.3162729   -.0052219
+  _Istapost19_69 |  -.5578548   .1803996    -3.09   0.004    -.9257823   -.1899274
+  _Istapost19_70 |  -.5043192   .0994653    -5.07   0.000      -.70718   -.3014584
+  _Istapost19_71 |  -.2234582   .0766188    -2.92   0.007    -.3797232   -.0671932
+  _Istapost19_72 |   -.273652   .0786724    -3.48   0.002    -.4341053   -.1131987
+  _Istapost19_73 |  -.2666445   .0949295    -2.81   0.009    -.4602545   -.0730346
+  _Istapost19_74 |  -.5144032   .1194296    -4.31   0.000    -.7579816   -.2708249
+  _Istapost19_75 |   .0378924   .1323328     0.29   0.777    -.2320022     .307787
+  _Istapost19_76 |   .1469579   .1978818     0.74   0.463    -.2566248    .5505406
+  _Istapost19_77 |  -.3125635   .3265692    -0.96   0.346    -.9786057    .3534787
+  _Istapost19_78 |  -.3879528    .087843    -4.42   0.000    -.5671097   -.2087959
+  _Istapost19_79 |   .0565078   .1806413     0.31   0.757    -.3119125    .4249281
+  _Istapost19_80 |   .2050316   .1639813     1.25   0.221    -.1294105    .5394738
+  _Istapost19_81 |  -.0838889   .0772023    -1.09   0.286    -.2413441    .0735662
+  _Istapost19_82 |   .1686711   .0858994     1.96   0.059     -.006522    .3438642
+  _Istapost19_83 |  -.8746243   .2657859    -3.29   0.002    -1.416698   -.3325505
+  _Istapost19_84 |  -.7413314   .2264901    -3.27   0.003    -1.203261   -.2794019
+  _Istapost19_85 |  -.2519055   .0921514    -2.73   0.010    -.4398495   -.0639614
+  _Istapost19_86 |  -.2672519   .0767239    -3.48   0.001    -.4237312   -.1107725
+  _Istapost19_87 |   .0758995   .0953175     0.80   0.432    -.1185017    .2703008
+  _Istapost19_88 |   .1321602   .0967029     1.37   0.182    -.0650667    .3293871
+  _Istapost19_89 |  -.2871149   .0675432    -4.25   0.000    -.4248702   -.1493596
+  _Istapost19_90 |  -.2829773   .1136419    -2.49   0.018    -.5147514   -.0512031
+  _Istapost19_91 |  -.2293197   .0686605    -3.34   0.002    -.3693537   -.0892857
+  _Istapost19_92 |  -.2273753   .1028953    -2.21   0.035    -.4372317   -.0175189
+  _Istapost19_93 |  -.5196642   .0740701    -7.02   0.000    -.6707312   -.3685973
+  _Istapost19_94 |   -.587483   .0817368    -7.19   0.000    -.7541863   -.4207798
+  _Istapost19_95 |  -.6370323   .3756292    -1.70   0.100    -1.403133    .1290685
+  _Istapost19_96 |  -.5023216     .20988    -2.39   0.023    -.9303747   -.0742685
+        year1937 |   -.055392    .010833    -5.11   0.000    -.0774861   -.0332979
+    _IstaXyear_2 |  -.0041335   .0206785    -0.20   0.843    -.0463076    .0380407
+    _IstaXyear_3 |  -.0116399   .0643733    -0.18   0.858      -.14293    .1196503
+    _IstaXyear_4 |  -.0117179   .1103961    -0.11   0.916    -.2368723    .2134365
+    _IstaXyear_5 |   -.014763   .0117519    -1.26   0.218    -.0387312    .0092051
+    _IstaXyear_6 |   .0500971   .0181888     2.75   0.010     .0130009    .0871934
+    _IstaXyear_7 |  -.0048791   .0264446    -0.18   0.855    -.0588132     .049055
+    _IstaXyear_8 |   .0207832    .049322     0.42   0.676    -.0798097    .1213761
+    _IstaXyear_9 |  -.0324033    .027344    -1.19   0.245    -.0881717    .0233651
+   _IstaXyear_10 |  -.0327567   .0263944    -1.24   0.224    -.0865884     .021075
+   _IstaXyear_11 |   .0006206   .0144927     0.04   0.966    -.0289375    .0301787
+   _IstaXyear_12 |   .0401365    .030893     1.30   0.203    -.0228702    .1031431
+   _IstaXyear_13 |   .0073645   .0131073     0.56   0.578     -.019368     .034097
+   _IstaXyear_14 |  -.0356924   .0315972    -1.13   0.267    -.1001352    .0287505
+   _IstaXyear_15 |   .0109299   .0209492     0.52   0.606    -.0317963     .053656
+   _IstaXyear_16 |  -.0017705   .0365064    -0.05   0.962    -.0762257    .0726847
+   _IstaXyear_17 |  -.0149801   .0204858    -0.73   0.470    -.0567611     .026801
+   _IstaXyear_18 |   .0187319    .033123     0.57   0.576     -.048823    .0862867
+   _IstaXyear_19 |   .0098168   .0292932     0.34   0.740     -.049927    .0695607
+   _IstaXyear_20 |   .0370789   .0681006     0.54   0.590    -.1018132     .175971
+   _IstaXyear_21 |   .0080779   .0117371     0.69   0.496      -.01586    .0320158
+   _IstaXyear_22 |   .0301094   .0269502     1.12   0.272    -.0248558    .0850747
+   _IstaXyear_23 |   .0117236   .0120053     0.98   0.336    -.0127614    .0362086
+   _IstaXyear_24 |   .0168579   .0155503     1.08   0.287    -.0148571    .0485728
+   _IstaXyear_25 |   .0098779   .0282627     0.35   0.729    -.0477643    .0675202
+   _IstaXyear_26 |   .0054959   .0527209     0.10   0.918    -.1020291    .1130209
+   _IstaXyear_27 |   .0122179   .0290478     0.42   0.677    -.0470254    .0714612
+   _IstaXyear_28 |   .0152044   .0545818     0.28   0.782     -.096116    .1265248
+   _IstaXyear_29 |   .0156504   .0231026     0.68   0.503    -.0314676    .0627685
+   _IstaXyear_30 |   .0278085   .0457314     0.61   0.548    -.0654614    .1210783
+   _IstaXyear_31 |   .0004889   .0100492     0.05   0.962    -.0200066    .0209844
+   _IstaXyear_32 |    .008595   .0138498     0.62   0.539    -.0196517    .0368418
+   _IstaXyear_33 |   .0027431   .0194481     0.14   0.889    -.0369215    .0424078
+   _IstaXyear_34 |   .0144978   .0285432     0.51   0.615    -.0437164    .0727121
+   _IstaXyear_35 |   .0101554   .0239613     0.42   0.675    -.0387139    .0590247
+   _IstaXyear_36 |   .0042674   .0689357     0.06   0.951     -.136328    .1448627
+   _IstaXyear_37 |   .0050744   .0120187     0.42   0.676    -.0194379    .0295866
+   _IstaXyear_38 |    .030776   .0213955     1.44   0.160    -.0128605    .0744125
+   _IstaXyear_39 |   .0082648    .013386     0.62   0.541    -.0190362    .0355658
+   _IstaXyear_40 |   .0212436    .017063     1.25   0.222    -.0135565    .0560438
+   _IstaXyear_41 |  -.0059565   .0129592    -0.46   0.649     -.032387     .020474
+   _IstaXyear_42 |   .0039718   .0157716     0.25   0.803    -.0281945    .0361381
+   _IstaXyear_43 |  -.0055409   .0106654    -0.52   0.607    -.0272932    .0162114
+   _IstaXyear_44 |   .0377659    .029364     1.29   0.208    -.0221222    .0976541
+   _IstaXyear_45 |   .0102421   .0095807     1.07   0.293    -.0092978     .029782
+   _IstaXyear_46 |   .0299881   .0185055     1.62   0.115    -.0077542    .0677304
+   _IstaXyear_47 |   .0029243   .0115901     0.25   0.802    -.0207138    .0265625
+   _IstaXyear_48 |   .0099355   .0260279     0.38   0.705    -.0431488    .0630197
+   _IstaXyear_49 |   .0028257   .0356617     0.08   0.937    -.0699068    .0755583
+   _IstaXyear_50 |   .0034514   .0643393     0.05   0.958    -.1277695    .1346722
+   _IstaXyear_51 |   .0150471   .0417087     0.36   0.721    -.0700183    .1001126
+   _IstaXyear_52 |  -.0765038    .089997    -0.85   0.402    -.2600539    .1070463
+   _IstaXyear_53 |  -.0054893   .0191599    -0.29   0.776    -.0445662    .0335876
+   _IstaXyear_54 |    .009148   .0476508     0.19   0.849    -.0880364    .1063324
+   _IstaXyear_55 |   .0107246   .0117855     0.91   0.370     -.013312    .0347612
+   _IstaXyear_56 |   .0287651   .0314798     0.91   0.368    -.0354383    .0929685
+   _IstaXyear_57 |  -.0253775   .0651821    -0.39   0.700    -.1583173    .1075622
+   _IstaXyear_58 |   .0305935   .0357275     0.86   0.398    -.0422733    .1034603
+   _IstaXyear_59 |   .0157499   .0131387     1.20   0.240    -.0110466    .0425463
+   _IstaXyear_60 |   .0284061   .0305218     0.93   0.359    -.0338436    .0906558
+   _IstaXyear_61 |   .0077862   .0101772     0.77   0.450    -.0129704    .0285428
+   _IstaXyear_62 |   .0064805   .0203854     0.32   0.753    -.0350958    .0480567
+   _IstaXyear_63 |  -.0061978   .0241283    -0.26   0.799    -.0554079    .0430123
+   _IstaXyear_64 |   .0975703   .0539452     1.81   0.080    -.0124518    .2075923
+   _IstaXyear_65 |   .0114715   .0111364     1.03   0.311    -.0112414    .0341844
+   _IstaXyear_66 |   .0197269   .0171907     1.15   0.260    -.0153337    .0547876
+   _IstaXyear_67 |   .0150248   .0210159     0.71   0.480    -.0278375    .0578871
+   _IstaXyear_68 |   .0332429   .0152598     2.18   0.037     .0021204    .0643655
+   _IstaXyear_69 |   -.009774   .0216992    -0.45   0.656    -.0540298    .0344818
+   _IstaXyear_70 |  -.0053599   .0191017    -0.28   0.781     -.044318    .0335982
+   _IstaXyear_71 |    .009599   .0118985     0.81   0.426    -.0146682    .0338661
+   _IstaXyear_72 |   .0450092   .0133344     3.38   0.002     .0178134    .0722049
+   _IstaXyear_73 |   .0055044   .0152955     0.36   0.721     -.025691    .0366998
+   _IstaXyear_74 |   .0601428    .026925     2.23   0.033     .0052289    .1150568
+   _IstaXyear_75 |  -.0019726   .0166157    -0.12   0.906    -.0358607    .0319154
+   _IstaXyear_76 |   .0211114   .0555008     0.38   0.706    -.0920832     .134306
+   _IstaXyear_77 |   .0509125   .0826093     0.62   0.542    -.1175702    .2193952
+   _IstaXyear_78 |  -.0002956   .0169568    -0.02   0.986    -.0348792     .034288
+   _IstaXyear_79 |  -.0087439   .0275498    -0.32   0.753     -.064932    .0474442
+   _IstaXyear_80 |   .0177749   .0387479     0.46   0.650     -.061252    .0968017
+   _IstaXyear_81 |  -.0245028   .0171972    -1.42   0.164    -.0595766    .0105711
+   _IstaXyear_82 |  -.0071505   .0190595    -0.38   0.710    -.0460226    .0317217
+   _IstaXyear_83 |  -.0025224   .0338575    -0.07   0.941    -.0715753    .0665304
+   _IstaXyear_84 |  -.0189883    .059667    -0.32   0.752    -.1406799    .1027034
+   _IstaXyear_85 |    .002967   .0124995     0.24   0.814     -.022526      .02846
+   _IstaXyear_86 |   .0064747   .0135935     0.48   0.637    -.0212494    .0341987
+   _IstaXyear_87 |   .0145877   .0148165     0.98   0.332    -.0156308    .0448062
+   _IstaXyear_88 |   .0121934   .0198952     0.61   0.544    -.0283832      .05277
+   _IstaXyear_89 |   .0015124   .0109731     0.14   0.891    -.0208674    .0238921
+   _IstaXyear_90 |  -.0057996   .0317495    -0.18   0.856    -.0705532     .058954
+   _IstaXyear_91 |   .0089979   .0116651     0.77   0.446    -.0147932     .032789
+   _IstaXyear_92 |   .0348041   .0208138     1.67   0.105     -.007646    .0772542
+   _IstaXyear_93 |  -.0030694   .0118777    -0.26   0.798     -.027294    .0211552
+   _IstaXyear_94 |   .0274939   .0188627     1.46   0.155    -.0109769    .0659647
+   _IstaXyear_95 |  -.0070538   .0483757    -0.15   0.885    -.1057166     .091609
+   _IstaXyear_96 |  -.0451654   .0532632    -0.85   0.403    -.1537964    .0634656
+         treated |   14.02323   .0304243   460.92   0.000     13.96118    14.08528
+treatedxpost1937 |  -.1254866   .0535284    -2.34   0.026    -.2346585   -.0163147
+    treatedxyear |   .0274596   .0041685     6.59   0.000      .018958    .0359613
+ treatxpostxyear |  -.1166872   .0127917    -9.12   0.000     -.142776   -.0905983
+           _cons |  -7.488869   .0697926  -107.30   0.000    -7.631212   -7.346526
+----------------------------------------------------------------------------------
+
+. 
+. eststo
+(est2 stored)
+
+. 
+. xi: areg logmortality year1937 treated treatedxpost1937 treatedxyear if disease == 1|disease == 4, absorb(stapost1937
+> ) cluster(diseaseyear)
+
+Linear regression, absorbing indicators             Number of obs     =  1,448
+Absorbed variable: stapost1937                      No. of categories =     96
+                                                    F(4, 31)          = 168.03
+                                                    Prob > F          = 0.0000
+                                                    R-squared         = 0.8412
+                                                    Adj R-squared     = 0.8295
+                                                    Root MSE          = 0.2176
+
+                               (Std. err. adjusted for 32 clusters in diseaseyear)
+----------------------------------------------------------------------------------
+                 |               Robust
+    logmortality | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-----------------+----------------------------------------------------------------
+        year1937 |  -.0502152   .0033975   -14.78   0.000    -.0571443    -.043286
+         treated |   .6096244   .0602367    10.12   0.000     .4867708     .732478
+treatedxpost1937 |  -.0721629   .0934028    -0.77   0.446    -.2626591    .1183333
+    treatedxyear |   .0060374   .0106836     0.57   0.576     -.015752    .0278267
+           _cons |  -7.687965   .0123615  -621.93   0.000    -7.713176   -7.662753
+----------------------------------------------------------------------------------
+
+. 
+. eststo
+(est3 stored)
+
+. 
+. xi: reg logmortality i.stapost1937*year1937 treated treatedxpost1937 treatedxyear treatxpostxyear if disease == 1|dis
+> ease == 4, cluster(diseaseyear)
+i.stapost1937     _Istapost19_1-96    (naturally coded; _Istapost19_1 omitted)
+i.s~1937*y~1937   _IstaXyear_#        (coded as above)
+
+Linear regression                               Number of obs     =      1,448
+                                                F(29, 31)         =          .
+                                                Prob > F          =          .
+                                                R-squared         =     0.8470
+                                                Root MSE          =     .22159
+
+                               (Std. err. adjusted for 32 clusters in diseaseyear)
+----------------------------------------------------------------------------------
+                 |               Robust
+    logmortality | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-----------------+----------------------------------------------------------------
+   _Istapost19_2 |   .1112679   .1205496     0.92   0.363    -.1345946    .3571305
+   _Istapost19_3 |   .6829116   .3811061     1.79   0.083    -.0943595    1.460183
+   _Istapost19_4 |   .8753359   .3710592     2.36   0.025     .1185557    1.632116
+   _Istapost19_5 |  -.1201897   .0700033    -1.72   0.096    -.2629624     .022583
+   _Istapost19_6 |  -.0044304    .134128    -0.03   0.974    -.2779863    .2691254
+   _Istapost19_7 |  -.1850659   .2102113    -0.88   0.385    -.6137947    .2436628
+   _Istapost19_8 |  -.2191173   .2421538    -0.90   0.373    -.7129932    .2747586
+   _Istapost19_9 |  -.0121809   .1272866    -0.10   0.924    -.2717837    .2474218
+  _Istapost19_10 |   .1368143   .1225556     1.12   0.273    -.1131394    .3867681
+  _Istapost19_11 |  -.4631687   .1212339    -3.82   0.001    -.7104269   -.2159106
+  _Istapost19_12 |  -.5506208   .1589547    -3.46   0.002     -.874811   -.2264305
+  _Istapost19_13 |    .004971   .1222113     0.04   0.968    -.2442805    .2542225
+  _Istapost19_14 |  -.0988728   .1436641    -0.69   0.496    -.3918777     .194132
+  _Istapost19_15 |  -.1480922   .1155598    -1.28   0.210    -.3837779    .0875935
+  _Istapost19_16 |  -.0182006   .1268631    -0.14   0.887    -.2769397    .2405384
+  _Istapost19_17 |  -.0800295   .1658239    -0.48   0.633    -.4182295    .2581705
+  _Istapost19_18 |   .0907544   .1272023     0.71   0.481    -.1686764    .3501852
+  _Istapost19_19 |  -.5418394   .2311196    -2.34   0.026    -1.013211   -.0704679
+  _Istapost19_20 |  -.5544565   .2701951    -2.05   0.049    -1.105523   -.0033899
+  _Istapost19_21 |  -.2856502   .1031938    -2.77   0.009    -.4961153   -.0751851
+  _Istapost19_22 |   -.272216   .1776854    -1.53   0.136    -.6346078    .0901758
+  _Istapost19_23 |  -.1734392    .114204    -1.52   0.139    -.4063598    .0594814
+  _Istapost19_24 |  -.2362729   .1288599    -1.83   0.076    -.4990843    .0265386
+  _Istapost19_25 |  -.5382989   .3032166    -1.78   0.086    -1.156713    .0801154
+  _Istapost19_26 |   -.633693   .2730247    -2.32   0.027    -1.190531   -.0768555
+  _Istapost19_27 |  -.4971682   .2441092    -2.04   0.050    -.9950322    .0006959
+  _Istapost19_28 |  -.5760555   .1837856    -3.13   0.004    -.9508887   -.2012223
+  _Istapost19_29 |   .1472284   .1114094     1.32   0.196    -.0799925    .3744494
+  _Istapost19_30 |   .1774545   .1616375     1.10   0.281    -.1522074    .5071163
+  _Istapost19_31 |  -.1659989    .130396    -1.27   0.212    -.4319432    .0999454
+  _Istapost19_32 |    .173665   .1281854     1.35   0.185    -.0877708    .4351008
+  _Istapost19_33 |  -.3294475   .2210151    -1.49   0.146    -.7802108    .1213158
+  _Istapost19_34 |  -.3329111    .196497    -1.69   0.100    -.7336693     .067847
+  _Istapost19_35 |   .0389981   .1171831     0.33   0.742    -.1999985    .2779947
+  _Istapost19_36 |   .0406809   .2275115     0.18   0.859     -.423332    .5046937
+  _Istapost19_37 |  -.2995911   .1405997    -2.13   0.041     -.586346   -.0128361
+  _Istapost19_38 |   -.348507   .1231267    -2.83   0.008    -.5996256   -.0973885
+  _Istapost19_39 |  -.4101939   .1171316    -3.50   0.001    -.6490854   -.1713024
+  _Istapost19_40 |  -.4496639   .1271512    -3.54   0.001    -.7089906   -.1903373
+  _Istapost19_41 |  -.4011291   .1966789    -2.04   0.050    -.8022583    3.11e-08
+  _Istapost19_42 |  -.4335688   .1568458    -2.76   0.010    -.7534579   -.1136797
+  _Istapost19_43 |    -.15035   .1028067    -1.46   0.154    -.3600256    .0593257
+  _Istapost19_44 |   .0409494   .1260965     0.32   0.748    -.2162261    .2981249
+  _Istapost19_45 |   .0499515     .11602     0.43   0.670    -.1866728    .2865758
+  _Istapost19_46 |  -.0223227   .1239565    -0.18   0.858    -.2751335    .2304882
+  _Istapost19_47 |  -.1959262   .1260304    -1.55   0.130     -.452967    .0611145
+  _Istapost19_48 |  -.2040647   .1313264    -1.55   0.130    -.4719067    .0637774
+  _Istapost19_49 |  -.6948363   .3428384    -2.03   0.051     -1.39406    .0043873
+  _Istapost19_50 |  -.7615005   .2878503    -2.65   0.013    -1.348575   -.1744259
+  _Istapost19_51 |   .1904801    .185199     1.03   0.312    -.1872358    .5681959
+  _Istapost19_52 |   -.115725   .2218769    -0.52   0.606     -.568246     .336796
+  _Istapost19_53 |  -.4044894    .249879    -1.62   0.116     -.914121    .1051422
+  _Istapost19_54 |  -.3915873   .2251413    -1.74   0.092    -.8507661    .0675915
+  _Istapost19_55 |  -.2999895    .114474    -2.62   0.013    -.5334607   -.0665183
+  _Istapost19_56 |  -.3940617   .1765374    -2.23   0.033    -.7541121   -.0340112
+  _Istapost19_57 |   .1231494   .3262963     0.38   0.708    -.5423362    .7886351
+  _Istapost19_58 |   .3479013   .2048424     1.70   0.099    -.0698776    .7656801
+  _Istapost19_59 |  -.1536421   .1146374    -1.34   0.190    -.3874465    .0801623
+  _Istapost19_60 |  -.3022008   .1870714    -1.62   0.116    -.6837354    .0793339
+  _Istapost19_61 |  -.0362155   .1149079    -0.32   0.755    -.2705717    .1981406
+  _Istapost19_62 |    .054168   .1299267     0.42   0.680    -.2108192    .3191553
+  _Istapost19_63 |  -.5968658   .3043286    -1.96   0.059    -1.217548    .0238166
+  _Istapost19_64 |  -.6386821   .2075822    -3.08   0.004    -1.062049   -.2153154
+  _Istapost19_65 |  -.2400642   .1117415    -2.15   0.040    -.4679625   -.0121659
+  _Istapost19_66 |  -.2571606   .1273988    -2.02   0.052    -.5169921    .0026709
+  _Istapost19_67 |  -.2035252     .19674    -1.03   0.309    -.6047792    .1977288
+  _Istapost19_68 |  -.1032946   .1338517    -0.77   0.446    -.3762869    .1696977
+  _Istapost19_69 |  -.6828344   .1442315    -4.73   0.000    -.9769964   -.3886723
+  _Istapost19_70 |  -.6212915   .1581145    -3.93   0.000    -.9437682   -.2988148
+  _Istapost19_71 |   -.226553    .151116    -1.50   0.144    -.5347561      .08165
+  _Istapost19_72 |  -.2866123    .127678    -2.24   0.032    -.5470134   -.0262113
+  _Istapost19_73 |  -.3207328   .1338082    -2.40   0.023    -.5936365   -.0478292
+  _Istapost19_74 |  -.3877829   .1386739    -2.80   0.009    -.6706101   -.1049556
+  _Istapost19_75 |   .0849535   .1518401     0.56   0.580    -.2247265    .3946334
+  _Istapost19_76 |   .0901996   .1437846     0.63   0.535    -.2030511    .3834503
+  _Istapost19_77 |  -.2346332    .401159    -0.58   0.563    -1.052802    .5835359
+  _Istapost19_78 |  -.3982825   .1339835    -2.97   0.006    -.6715435   -.1250214
+  _Istapost19_79 |   .1967888   .0807881     2.44   0.021     .0320205    .3615572
+  _Istapost19_80 |   .3058055   .1741679     1.76   0.089    -.0494124    .6610234
+  _Istapost19_81 |  -.0678192   .3726212    -0.18   0.857    -.8277851    .6921468
+  _Istapost19_82 |    .120756   .1651069     0.73   0.470    -.2159818    .4574938
+  _Istapost19_83 |  -.6890158   .3956453    -1.74   0.092     -1.49594     .117908
+  _Istapost19_84 |   -.658288    .276602    -2.38   0.024    -1.222422   -.0941544
+  _Istapost19_85 |  -.1438145   .1726086    -0.83   0.411    -.4958519     .208223
+  _Istapost19_86 |  -.0961669   .1559832    -0.62   0.542    -.4142967    .2219629
+  _Istapost19_87 |   .1411406   .1125518     1.25   0.219    -.0884104    .3706916
+  _Istapost19_88 |   .1507328   .1473407     1.02   0.314    -.1497706    .4512361
+  _Istapost19_89 |  -.3894053   .1238181    -3.14   0.004    -.6419338   -.1368767
+  _Istapost19_90 |  -.3377471   .1329115    -2.54   0.016    -.6088219   -.0666722
+  _Istapost19_91 |  -.1011927   .1229185    -0.82   0.417    -.3518867    .1495012
+  _Istapost19_92 |  -.0647442   .1206281    -0.54   0.595    -.3107669    .1812784
+  _Istapost19_93 |  -.4700201   .1356221    -3.47   0.002    -.7466231    -.193417
+  _Istapost19_94 |  -.5052222   .1354854    -3.73   0.001    -.7815464    -.228898
+  _Istapost19_95 |  -.6789395   .3160788    -2.15   0.040    -1.323586   -.0342926
+  _Istapost19_96 |  -.5796505   .2260555    -2.56   0.015    -1.040694   -.1186072
+        year1937 |  -.0478681   .0201226    -2.38   0.024    -.0889084   -.0068279
+    _IstaXyear_2 |  -.0089573   .0210409    -0.43   0.673    -.0518706    .0339559
+    _IstaXyear_3 |  -.0132754   .0539011    -0.25   0.807    -.1232073    .0966565
+    _IstaXyear_4 |  -.0474232   .0878499    -0.54   0.593    -.2265942    .1317479
+    _IstaXyear_5 |  -.0033228   .0085812    -0.39   0.701    -.0208241    .0141786
+    _IstaXyear_6 |   .0141592   .0308439     0.46   0.649    -.0487473    .0770658
+    _IstaXyear_7 |   -.011212   .0316108    -0.35   0.725    -.0756827    .0532587
+    _IstaXyear_8 |   .0282326   .0519376     0.54   0.591    -.0776949    .1341601
+    _IstaXyear_9 |  -.0465172   .0264266    -1.76   0.088    -.1004147    .0073803
+   _IstaXyear_10 |  -.0230274   .0226304    -1.02   0.317    -.0691823    .0231275
+   _IstaXyear_11 |  -.0226576   .0207067    -1.09   0.282    -.0648892     .019574
+   _IstaXyear_12 |   .0310978   .0342695     0.91   0.371    -.0387952    .1009909
+   _IstaXyear_13 |   .0009603   .0220025     0.04   0.965     -.043914    .0458347
+   _IstaXyear_14 |   .0286263   .0284309     1.01   0.322    -.0293589    .0866114
+   _IstaXyear_15 |   .0038166   .0206407     0.18   0.855    -.0382805    .0459137
+   _IstaXyear_16 |  -.0063997   .0223557    -0.29   0.777    -.0519945    .0391951
+   _IstaXyear_17 |  -.0111655   .0266129    -0.42   0.678    -.0654429    .0431118
+   _IstaXyear_18 |  -.0201647   .0225132    -0.90   0.377    -.0660806    .0257512
+   _IstaXyear_19 |   .0028197   .0324807     0.09   0.931    -.0634251    .0690645
+   _IstaXyear_20 |  -.0269584   .0598747    -0.45   0.656    -.1490737    .0951568
+   _IstaXyear_21 |  -.0019795   .0191387    -0.10   0.918    -.0410131    .0370541
+   _IstaXyear_22 |   .0067775   .0420688     0.16   0.873    -.0790225    .0925774
+   _IstaXyear_23 |  -.0041735   .0194717    -0.21   0.832    -.0438862    .0355393
+   _IstaXyear_24 |   .0252162   .0248273     1.02   0.318    -.0254195    .0758518
+   _IstaXyear_25 |   .0081178   .0385119     0.21   0.834    -.0704278    .0866635
+   _IstaXyear_26 |  -.0066691   .0628578    -0.11   0.916    -.1348684    .1215303
+   _IstaXyear_27 |   .0124498   .0320846     0.39   0.701    -.0529873    .0778869
+   _IstaXyear_28 |   .0048049   .0397667     0.12   0.905    -.0762999    .0859097
+   _IstaXyear_29 |   .0092502   .0193795     0.48   0.636    -.0302746     .048775
+   _IstaXyear_30 |    .019118   .0351401     0.54   0.590    -.0525508    .0907868
+   _IstaXyear_31 |  -.0199843   .0163213    -1.22   0.230    -.0532718    .0133031
+   _IstaXyear_32 |  -.0110195   .0264826    -0.42   0.680    -.0650311     .042992
+   _IstaXyear_33 |  -.0117779   .0310117    -0.38   0.707    -.0750267     .051471
+   _IstaXyear_34 |   .0286925   .0423344     0.68   0.503     -.057649    .1150341
+   _IstaXyear_35 |  -.0095011   .0215806    -0.44   0.663     -.053515    .0345129
+   _IstaXyear_36 |   .0324798   .0504564     0.64   0.524    -.0704266    .1353862
+   _IstaXyear_37 |  -.0130601   .0222237    -0.59   0.561    -.0583855    .0322654
+   _IstaXyear_38 |   .0410957   .0222469     1.85   0.074    -.0042771    .0864684
+   _IstaXyear_39 |  -.0111034   .0210809    -0.53   0.602    -.0540981    .0318913
+   _IstaXyear_40 |   .0330607   .0226289     1.46   0.154    -.0130913    .0792126
+   _IstaXyear_41 |   .0001076   .0267137     0.00   0.997    -.0543753    .0545906
+   _IstaXyear_42 |   .0073821   .0329726     0.22   0.824    -.0598659    .0746301
+   _IstaXyear_43 |  -.0145249   .0175937    -0.83   0.415    -.0504075    .0213577
+   _IstaXyear_44 |  -.0078037   .0257909    -0.30   0.764    -.0604045    .0447972
+   _IstaXyear_45 |     .01371    .015602     0.88   0.386    -.0181105    .0455305
+   _IstaXyear_46 |   .0155592   .0219204     0.71   0.483    -.0291477    .0602662
+   _IstaXyear_47 |    .007069   .0216498     0.33   0.746    -.0370861     .051224
+   _IstaXyear_48 |  -.0074627   .0263917    -0.28   0.779     -.061289    .0463636
+   _IstaXyear_49 |   .0041236   .0430624     0.10   0.924    -.0837027      .09195
+   _IstaXyear_50 |   .0137813   .0690136     0.20   0.843     -.126973    .1545355
+   _IstaXyear_51 |   -.003598   .0344738    -0.10   0.918    -.0739078    .0667118
+   _IstaXyear_52 |   .0666525   .0484472     1.38   0.179    -.0321563    .1654613
+   _IstaXyear_53 |  -.0214849   .0339395    -0.63   0.531     -.090705    .0477351
+   _IstaXyear_54 |    .010741   .0551521     0.19   0.847    -.1017425    .1232244
+   _IstaXyear_55 |   -.009648   .0203706    -0.47   0.639    -.0511942    .0318982
+   _IstaXyear_56 |   .0424827   .0388025     1.09   0.282    -.0366555    .1216208
+   _IstaXyear_57 |     -.0532   .0646305    -0.82   0.417    -.1850147    .0786147
+   _IstaXyear_58 |  -.0319534   .0433081    -0.74   0.466    -.1202808     .056374
+   _IstaXyear_59 |  -.0020085   .0205573    -0.10   0.923    -.0439353    .0399184
+   _IstaXyear_60 |   .0227007   .0429642     0.53   0.601    -.0649253    .1103268
+   _IstaXyear_61 |   .0047022   .0204923     0.23   0.820    -.0370922    .0464966
+   _IstaXyear_62 |    -.03401   .0247591    -1.37   0.179    -.0845066    .0164866
+   _IstaXyear_63 |   .0055929   .0364735     0.15   0.879    -.0687952     .079981
+   _IstaXyear_64 |  -.0017869   .0432489    -0.04   0.967    -.0899937    .0864198
+   _IstaXyear_65 |  -.0060713   .0196547    -0.31   0.759    -.0461573    .0340147
+   _IstaXyear_66 |   .0264028   .0226755     1.16   0.253    -.0198441    .0726498
+   _IstaXyear_67 |   .0081661   .0322295     0.25   0.802    -.0575665    .0738987
+   _IstaXyear_68 |   .0019651   .0282911     0.07   0.945    -.0557351    .0596652
+   _IstaXyear_69 |  -.0232086   .0241306    -0.96   0.344    -.0724232    .0260059
+   _IstaXyear_70 |   .0493835    .045514     1.09   0.286    -.0434429    .1422099
+   _IstaXyear_71 |  -.0140409   .0240447    -0.58   0.563    -.0630805    .0349986
+   _IstaXyear_72 |   .0360521   .0229481     1.57   0.126    -.0107509    .0828551
+   _IstaXyear_73 |  -.0176509   .0211471    -0.83   0.410    -.0607807     .025479
+   _IstaXyear_74 |   .0375057   .0269523     1.39   0.174    -.0174639    .0924754
+   _IstaXyear_75 |   .0093979   .0226965     0.41   0.682     -.036892    .0556877
+   _IstaXyear_76 |  -.0180402   .0282308    -0.64   0.528    -.0756173    .0395369
+   _IstaXyear_77 |   .0379604   .0841305     0.45   0.655     -.133625    .2095458
+   _IstaXyear_78 |    .002387   .0236334     0.10   0.920    -.0458136    .0505876
+   _IstaXyear_79 |  -.0026414    .014249    -0.19   0.854    -.0317023    .0264196
+   _IstaXyear_80 |  -.0046525   .0424875    -0.11   0.914    -.0913064    .0820014
+   _IstaXyear_81 |  -.0101456   .1005203    -0.10   0.920    -.2151582     .194867
+   _IstaXyear_82 |  -.0179712   .0393539    -0.46   0.651     -.098234    .0622915
+   _IstaXyear_83 |  -.0031611   .0501236    -0.06   0.950    -.1053887    .0990666
+   _IstaXyear_84 |  -.0450916   .0664231    -0.68   0.502    -.1805623    .0903791
+   _IstaXyear_85 |  -.0027212   .0264716    -0.10   0.919    -.0567104    .0512679
+   _IstaXyear_86 |  -.0111817   .0337361    -0.33   0.743     -.079987    .0576236
+   _IstaXyear_87 |   .0092775   .0213147     0.44   0.666    -.0341942    .0527492
+   _IstaXyear_88 |  -.0022332   .0314222    -0.07   0.944    -.0663191    .0618528
+   _IstaXyear_89 |  -.0031901   .0237704    -0.13   0.894    -.0516702    .0452901
+   _IstaXyear_90 |   .0288537   .0240017     1.20   0.238    -.0200981    .0778054
+   _IstaXyear_91 |   .0110961   .0200106     0.55   0.583    -.0297157     .051908
+   _IstaXyear_92 |   .0001954   .0211974     0.01   0.993     -.043037    .0434277
+   _IstaXyear_93 |  -.0116184   .0212543    -0.55   0.589    -.0549667    .0317299
+   _IstaXyear_94 |   .0049122   .0267391     0.18   0.855    -.0496226    .0594469
+   _IstaXyear_95 |  -.0024507   .0414284    -0.06   0.953    -.0869444     .082043
+   _IstaXyear_96 |  -.0282581   .0628137    -0.45   0.656    -.1563674    .0998512
+         treated |   .6569481   .0653505    10.05   0.000     .5236649    .7902312
+treatedxpost1937 |  -.0257759   .0840734    -0.31   0.761    -.1972448    .1456931
+    treatedxyear |   .0125938   .0120019     1.05   0.302    -.0118843    .0370719
+ treatxpostxyear |  -.0333309   .0253724    -1.31   0.199    -.0850783    .0184164
+           _cons |  -7.498989   .1189105   -63.06   0.000    -7.741509    -7.25647
+----------------------------------------------------------------------------------
+
+. 
+. eststo
+(est4 stored)
+
+. 
+. xi: areg logmortality year1937 treated treatedxpost1937 treatedxyear if disease == 1|disease == 3, absorb(stapost1937
+> ) cluster(diseaseyear)
+
+Linear regression, absorbing indicators            Number of obs     =   1,433
+Absorbed variable: stapost1937                     No. of categories =      96
+                                                   F(4, 31)          = 3206.61
+                                                   Prob > F          =  0.0000
+                                                   R-squared         =  0.9461
+                                                   Adj R-squared     =  0.9421
+                                                   Root MSE          =  0.5094
+
+                               (Std. err. adjusted for 32 clusters in diseaseyear)
+----------------------------------------------------------------------------------
+                 |               Robust
+    logmortality | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-----------------+----------------------------------------------------------------
+        year1937 |  -.0465052   .0046122   -10.08   0.000    -.0559119   -.0370986
+         treated |  -3.728658   .1408656   -26.47   0.000    -4.015955   -3.441361
+treatedxpost1937 |  -.7139261   .2544989    -2.81   0.009     -1.23298   -.1948722
+    treatedxyear |  -.0206582   .0173949    -1.19   0.244    -.0561352    .0148189
+           _cons |  -7.677648   .0150211  -511.12   0.000    -7.708284   -7.647012
+----------------------------------------------------------------------------------
+
+. 
+. eststo
+(est5 stored)
+
+. 
+. xi: reg logmortality i.stapost1937*year1937 treated treatedxpost1937 treatedxyear treatxpostxyear if disease == 1|dis
+> ease == 3, cluster(diseaseyear)
+i.stapost1937     _Istapost19_1-96    (naturally coded; _Istapost19_1 omitted)
+i.s~1937*y~1937   _IstaXyear_#        (coded as above)
+
+Linear regression                               Number of obs     =      1,433
+                                                F(29, 31)         =          .
+                                                Prob > F          =          .
+                                                R-squared         =     0.9505
+                                                Root MSE          =     .50693
+
+                               (Std. err. adjusted for 32 clusters in diseaseyear)
+----------------------------------------------------------------------------------
+                 |               Robust
+    logmortality | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-----------------+----------------------------------------------------------------
+   _Istapost19_2 |   .3420969   .5181216     0.66   0.514    -.7146191    1.398813
+   _Istapost19_3 |   .9687172   .3805841     2.55   0.016     .1925109    1.744924
+   _Istapost19_4 |   .7709255   .9773071     0.79   0.436    -1.222305    2.764156
+   _Istapost19_5 |  -.3433618    .106944    -3.21   0.003    -.5614756   -.1252479
+   _Istapost19_6 |  -.1952228   .6039311    -0.32   0.749    -1.426949    1.036503
+   _Istapost19_7 |   .1062176   .3780293     0.28   0.781    -.6647782    .8772134
+   _Istapost19_8 |   -.061941    .567919    -0.11   0.914    -1.220219    1.096337
+   _Istapost19_9 |   .6289864   .6210206     1.01   0.319    -.6375934    1.895566
+  _Istapost19_10 |   .2606453   .4623287     0.56   0.577    -.6822802    1.203571
+  _Istapost19_11 |  -.4419784   .3980447    -1.11   0.275    -1.253796    .3698391
+  _Istapost19_12 |   -.499544   .5589764    -0.89   0.378    -1.639584    .6404959
+  _Istapost19_13 |   .1825414   .4280094     0.43   0.673    -.6903896    1.055472
+  _Istapost19_14 |   .0853112   .5032534     0.17   0.866    -.9410808    1.111703
+  _Istapost19_15 |  -.6479745   .3923914    -1.65   0.109    -1.448262    .1523129
+  _Istapost19_16 |  -.5726111   .6735164    -0.85   0.402    -1.946257    .8010346
+  _Istapost19_17 |  -.5644826   .2359337    -2.39   0.023    -1.045673   -.0832927
+  _Istapost19_18 |   .1025372   .5356281     0.19   0.849    -.9898835    1.194958
+  _Istapost19_19 |  -.2598789   .7696071    -0.34   0.738    -1.829503    1.309745
+  _Istapost19_20 |  -.4800649   .5804268    -0.83   0.415    -1.663853    .7037234
+  _Istapost19_21 |   .6190604   .6724021     0.92   0.364    -.7523128    1.990434
+  _Istapost19_22 |   .5455232   .4993099     1.09   0.283     -.472826    1.563872
+  _Istapost19_23 |   .4997247   .6368349     0.78   0.439    -.7991087    1.798558
+  _Istapost19_24 |   .6459315   .5703239     1.13   0.266    -.5172518    1.809115
+  _Istapost19_25 |  -.1183591   .7205588    -0.16   0.871    -1.587948     1.35123
+  _Istapost19_26 |   .0453681   .7288794     0.06   0.951    -1.441191    1.531927
+  _Istapost19_27 |  -.1585965   .6706833    -0.24   0.815    -1.526464    1.209271
+  _Istapost19_28 |  -.0831026   .6417555    -0.13   0.898    -1.391972    1.225766
+  _Istapost19_29 |   .7405566   .4651682     1.59   0.122    -.2081603    1.689273
+  _Istapost19_30 |    .642151   .4567224     1.41   0.170    -.2893405    1.573642
+  _Istapost19_31 |  -.3073004   .2778482    -1.11   0.277    -.8739755    .2593747
+  _Istapost19_32 |  -.4979802   .7207082    -0.69   0.495    -1.967874    .9719138
+  _Istapost19_33 |  -.2467516   .4961252    -0.50   0.622    -1.258606    .7651025
+  _Istapost19_34 |  -.5255723   .4886656    -1.08   0.290    -1.522212    .4710679
+  _Istapost19_35 |   .6010734    .379384     1.58   0.123    -.1726853    1.374832
+  _Istapost19_36 |   .1679464   .5984874     0.28   0.781    -1.052677     1.38857
+  _Istapost19_37 |    .185281   .5415519     0.34   0.735    -.9192213    1.289783
+  _Istapost19_38 |  -.2486928   .4535527    -0.55   0.587     -1.17372    .6763341
+  _Istapost19_39 |   .2148814   .7100323     0.30   0.764    -1.233239    1.663002
+  _Istapost19_40 |   .5127128    .549294     0.93   0.358    -.6075796    1.633005
+  _Istapost19_41 |  -.7059966   .5471029    -1.29   0.206     -1.82182    .4098272
+  _Istapost19_42 |  -.0806293   .4816478    -0.17   0.868    -1.062956    .9016978
+  _Istapost19_43 |  -.1286232   .3969515    -0.32   0.748    -.9382111    .6809647
+  _Istapost19_44 |  -.9113008   .8027476    -1.14   0.265    -2.548515    .7259136
+  _Istapost19_45 |   .5894598   .5766523     1.02   0.315    -.5866304     1.76555
+  _Istapost19_46 |    .396135   .4810463     0.82   0.417    -.5849654    1.377235
+  _Istapost19_47 |  -.0439055   .5626924    -0.08   0.938    -1.191524    1.103713
+  _Istapost19_48 |   .5919901   .5355078     1.11   0.277    -.5001853    1.684165
+  _Istapost19_49 |  -.2599924   .7492544    -0.35   0.731    -1.788107    1.268122
+  _Istapost19_50 |  -.1204433    .696272    -0.17   0.864    -1.540499    1.299613
+  _Istapost19_51 |   .5324217   .3944162     1.35   0.187    -.2719955    1.336839
+  _Istapost19_52 |   .2765863    .481733     0.57   0.570    -.7059146    1.259087
+  _Istapost19_53 |  -.2243244   .8175841    -0.27   0.786    -1.891798    1.443149
+  _Istapost19_54 |  -.2133378   .5622317    -0.38   0.707    -1.360017    .9333413
+  _Istapost19_55 |   .0680477   .4300225     0.16   0.875    -.8089889    .9450842
+  _Istapost19_56 |  -.3502781   .5446348    -0.64   0.525    -1.461068     .760512
+  _Istapost19_57 |   1.254101   .5841965     2.15   0.040      .062624    2.445577
+  _Istapost19_58 |   .4235395   .5147673     0.82   0.417    -.6263354    1.473414
+  _Istapost19_59 |   .1892589   .4023942     0.47   0.641    -.6314295    1.009947
+  _Istapost19_60 |  -.1530904   .4916463    -0.31   0.758     -1.15581    .8496288
+  _Istapost19_61 |   .2057606   .3700182     0.56   0.582    -.5488965    .9604176
+  _Istapost19_62 |  -.0179147   .4843369    -0.04   0.971    -1.005726    .9698969
+  _Istapost19_63 |  -.8159579   .7659221    -1.07   0.295    -2.378066    .7461505
+  _Istapost19_64 |    .416762    .755746     0.55   0.585    -1.124592    1.958116
+  _Istapost19_65 |   .4748148   .6500231     0.73   0.471    -.8509161    1.800546
+  _Istapost19_66 |   .2903556     .47796     0.61   0.548    -.6844503    1.265161
+  _Istapost19_67 |  -.1816495   .3868088    -0.47   0.642    -.9705513    .6072523
+  _Istapost19_68 |   .2848798   .4628047     0.62   0.543    -.6590167    1.228776
+  _Istapost19_69 |  -.2469878   .6855454    -0.36   0.721    -1.645167    1.151191
+  _Istapost19_70 |  -.2977779   .5269916    -0.57   0.576    -1.372584    .7770285
+  _Istapost19_71 |   .2311115    .581882     0.40   0.694    -.9556446    1.417868
+  _Istapost19_72 |   .2164166   .4699709     0.46   0.648    -.7420954    1.174929
+  _Istapost19_73 |  -.1080816   .4121435    -0.26   0.795    -.9486538    .7324906
+  _Istapost19_74 |  -.4705411   .4779897    -0.98   0.333    -1.445408    .5043254
+  _Istapost19_75 |  -.0962171   .3383924    -0.28   0.778     -.786373    .5939388
+  _Istapost19_76 |  -.2518528   .5709054    -0.44   0.662    -1.416222    .9125163
+  _Istapost19_77 |  -.4123541   .5095767    -0.81   0.425    -1.451643    .6269345
+  _Istapost19_78 |   .1482137   .5535365     0.27   0.791    -.9807314    1.277159
+  _Istapost19_79 |   .4355702   .3448687     1.26   0.216    -.2677942    1.138935
+  _Istapost19_80 |    .404722   .4934747     0.82   0.418    -.6017263     1.41117
+  _Istapost19_81 |  -.2610129   1.081627    -0.24   0.811    -2.467006     1.94498
+  _Istapost19_82 |   .0090676   .5616678     0.02   0.987    -1.136461    1.154597
+  _Istapost19_83 |   .1314858   .8339514     0.16   0.876    -1.569369    1.832341
+  _Istapost19_84 |  -.1697839   .5929145    -0.29   0.777    -1.379041    1.039473
+  _Istapost19_85 |  -.0459517   .5171868    -0.09   0.930    -1.100761    1.008858
+  _Istapost19_86 |   .0064501   .5244717     0.01   0.990    -1.063217    1.076117
+  _Istapost19_87 |   .4326242   .4249034     1.02   0.316    -.4339719     1.29922
+  _Istapost19_88 |  -.1059976   .5733466    -0.18   0.855    -1.275346     1.06335
+  _Istapost19_89 |  -.3343744   .4434899    -0.75   0.457    -1.238878    .5701293
+  _Istapost19_90 |  -.1951318   .4715486    -0.41   0.682    -1.156862     .766598
+  _Istapost19_91 |   .3738631   .6676582     0.56   0.580    -.9878348    1.735561
+  _Istapost19_92 |    .663394   .5172301     1.28   0.209    -.3915038    1.718292
+  _Istapost19_93 |  -.1943893   .5421999    -0.36   0.722    -1.300213    .9114346
+  _Istapost19_94 |   .1166355    .566042     0.21   0.838    -1.037815    1.271086
+  _Istapost19_95 |  -.2258394   .8980019    -0.25   0.803    -2.057326    1.605648
+  _Istapost19_96 |  -.0749816   .7080191    -0.11   0.916    -1.518996    1.369033
+        year1937 |   -.026412   .0684133    -0.39   0.702    -.1659418    .1131178
+    _IstaXyear_2 |  -.1149062   .1165501    -0.99   0.332    -.3526116    .1227992
+    _IstaXyear_3 |  -.0030719   .0544721    -0.06   0.955    -.1141686    .1080247
+    _IstaXyear_4 |  -.0270853   .2203999    -0.12   0.903    -.4765938    .4224233
+    _IstaXyear_5 |   -.040376   .0152405    -2.65   0.013    -.0714592   -.0092928
+    _IstaXyear_6 |  -.0613587   .1460937    -0.42   0.677    -.3593188    .2366014
+    _IstaXyear_7 |  -.0143846   .0598189    -0.24   0.812    -.1363861    .1076168
+    _IstaXyear_8 |   -.048196   .1172184    -0.41   0.684    -.2872645    .1908724
+    _IstaXyear_9 |  -.0117611    .098618    -0.12   0.906    -.2128937    .1893716
+   _IstaXyear_10 |    .040017   .0882369     0.45   0.653    -.1399434    .2199773
+   _IstaXyear_11 |  -.0610878   .0617975    -0.99   0.331    -.1871247    .0649491
+   _IstaXyear_12 |   .0106158   .1163151     0.09   0.928    -.2266103     .247842
+   _IstaXyear_13 |  -.0147801   .0690169    -0.21   0.832    -.1555411    .1259808
+   _IstaXyear_14 |   .0611259   .1023204     0.60   0.555    -.1475579    .2698097
+   _IstaXyear_15 |  -.0343897   .0610558    -0.56   0.577    -.1589138    .0901345
+   _IstaXyear_16 |   .0254792   .1286002     0.20   0.844    -.2368025     .287761
+   _IstaXyear_17 |  -.0853322   .0397227    -2.15   0.040    -.1663473   -.0043172
+   _IstaXyear_18 |  -.0758494   .1165101    -0.65   0.520    -.3134733    .1617745
+   _IstaXyear_19 |  -.0397962   .1108918    -0.36   0.722    -.2659616    .1863692
+   _IstaXyear_20 |   .0525058   .1335158     0.39   0.697    -.2198015     .324813
+   _IstaXyear_21 |   .0126196    .088251     0.14   0.887    -.1673696    .1926088
+   _IstaXyear_22 |   -.075407   .0836467    -0.90   0.374    -.2460056    .0951916
+   _IstaXyear_23 |   .0010521   .0863164     0.01   0.990    -.1749913    .1770955
+   _IstaXyear_24 |  -.0877836   .1028336    -0.85   0.400    -.2975141     .121947
+   _IstaXyear_25 |  -.0019049   .0967894    -0.02   0.984    -.1993082    .1954984
+   _IstaXyear_26 |  -.0658754   .1570464    -0.42   0.678    -.3861736    .2544229
+   _IstaXyear_27 |  -.0187197   .0962371    -0.19   0.847    -.2149965    .1775571
+   _IstaXyear_28 |  -.0020156   .1436843    -0.01   0.989    -.2950617    .2910305
+   _IstaXyear_29 |   .0202623   .0677313     0.30   0.767    -.1178767    .1584012
+   _IstaXyear_30 |   .0018188   .0776502     0.02   0.981    -.1565498    .1601875
+   _IstaXyear_31 |  -.0068403   .0377972    -0.18   0.858    -.0839281    .0702476
+   _IstaXyear_32 |   .0269041   .1620039     0.17   0.869     -.303505    .3573131
+   _IstaXyear_33 |  -.0559364   .0776329    -0.72   0.477    -.2142698    .1023971
+   _IstaXyear_34 |   .0999679   .0882924     1.13   0.266    -.0801056    .2800415
+   _IstaXyear_35 |   .0378896    .058288     0.65   0.520    -.0809896    .1567688
+   _IstaXyear_36 |  -.0449358   .1313471    -0.34   0.735    -.3128199    .2229483
+   _IstaXyear_37 |  -.0241475     .07785    -0.31   0.758    -.1829236    .1346285
+   _IstaXyear_38 |   .0558953   .0713479     0.78   0.439    -.0896196    .2014102
+   _IstaXyear_39 |  -.0346106   .0986402    -0.35   0.728    -.2357887    .1665674
+   _IstaXyear_40 |  -.1048297   .0975421    -1.07   0.291    -.3037681    .0941087
+   _IstaXyear_41 |  -.1146992   .0850564    -1.35   0.187    -.2881729    .0587746
+   _IstaXyear_42 |  -.0251753   .0811832    -0.31   0.759    -.1907496     .140399
+   _IstaXyear_43 |   .0113201   .0684096     0.17   0.870    -.1282022    .1508424
+   _IstaXyear_44 |   .1533663   .1448004     1.06   0.298    -.1419562    .4486887
+   _IstaXyear_45 |   .0170248   .0822309     0.21   0.837    -.1506863    .1847359
+   _IstaXyear_46 |  -.0456271    .081117    -0.56   0.578    -.2110663     .119812
+   _IstaXyear_47 |  -.0542363   .0845462    -0.64   0.526    -.2266693    .1181967
+   _IstaXyear_48 |  -.0472681   .0966813    -0.49   0.628    -.2444508    .1499147
+   _IstaXyear_49 |  -.0114086   .1013255    -0.11   0.911    -.2180634    .1952461
+   _IstaXyear_50 |  -.0340533   .1481569    -0.23   0.820    -.3362213    .2681147
+   _IstaXyear_51 |   .0054081   .0660713     0.08   0.935    -.1293452    .1401614
+   _IstaXyear_52 |   .0963313   .1018261     0.95   0.351    -.1113445     .304007
+   _IstaXyear_53 |  -.0625799   .1080108    -0.58   0.567    -.2828694    .1577096
+   _IstaXyear_54 |   .0073557   .1113368     0.07   0.948    -.2197172    .2344287
+   _IstaXyear_55 |  -.0175062   .0678027    -0.26   0.798    -.1557908    .1207784
+   _IstaXyear_56 |   .0611808   .0982212     0.62   0.538    -.1391427    .2615044
+   _IstaXyear_57 |   .1015086   .1225788     0.83   0.414    -.1484925    .3515097
+   _IstaXyear_58 |  -.0519647   .0993352    -0.52   0.605    -.2545601    .1506307
+   _IstaXyear_59 |  -.0015021   .0627551    -0.02   0.981    -.1294921    .1264878
+   _IstaXyear_60 |    .004818   .0878551     0.05   0.957    -.1743636    .1839996
+   _IstaXyear_61 |   .0095085   .0600804     0.16   0.875    -.1130262    .1320433
+   _IstaXyear_62 |  -.0094986   .0787126    -0.12   0.905     -.170034    .1510368
+   _IstaXyear_63 |  -.1216458    .110988    -1.10   0.282    -.3480073    .1047157
+   _IstaXyear_64 |  -.1951374   .1548142    -1.26   0.217    -.5108831    .1206082
+   _IstaXyear_65 |   .0048518   .0869853     0.06   0.956    -.1725558    .1822594
+   _IstaXyear_66 |  -.0233679     .07828    -0.30   0.767    -.1830209    .1362851
+   _IstaXyear_67 |  -.0423329   .0667865    -0.63   0.531    -.1785448    .0938791
+   _IstaXyear_68 |  -.1005695   .0856021    -1.17   0.249     -.275156    .0740171
+   _IstaXyear_69 |  -.0339289   .0897891    -0.38   0.708     -.217055    .1491971
+   _IstaXyear_70 |   .0129422   .1082664     0.12   0.906    -.2078686    .2337529
+   _IstaXyear_71 |  -.0188488   .0821172    -0.23   0.820    -.1863278    .1486303
+   _IstaXyear_72 |  -.0398123   .0764871    -0.52   0.606    -.1958087    .1161841
+   _IstaXyear_73 |   -.026695   .0690146    -0.39   0.702    -.1674511    .1140612
+   _IstaXyear_74 |   .0712704   .0782534     0.91   0.369    -.0883285    .2308694
+   _IstaXyear_75 |   .0171325   .0593188     0.29   0.775     -.103849     .138114
+   _IstaXyear_76 |  -.0340439   .1172661    -0.29   0.774    -.2732096    .2051218
+   _IstaXyear_77 |  -.0740417   .0811445    -0.91   0.369     -.239537    .0914535
+   _IstaXyear_78 |  -.0749188   .1137535    -0.66   0.515    -.3069207     .157083
+   _IstaXyear_79 |  -.0094848    .046411    -0.20   0.839    -.1041405     .085171
+   _IstaXyear_80 |   .0001661   .0877879     0.00   0.999    -.1788785    .1792107
+   _IstaXyear_81 |  -.0953488   .3063545    -0.31   0.758     -.720163    .5294653
+   _IstaXyear_82 |  -.0447277   .1173781    -0.38   0.706    -.2841219    .1946665
+   _IstaXyear_83 |    .039521   .1107492     0.36   0.724    -.1863535    .2653956
+   _IstaXyear_84 |  -.0793406   .1243957    -0.64   0.528    -.3330474    .1743662
+   _IstaXyear_85 |  -.0486758   .0773075    -0.63   0.534    -.2063454    .1089938
+   _IstaXyear_86 |   .0071799   .0925582     0.08   0.939    -.1815938    .1959537
+   _IstaXyear_87 |   .0186789   .0618117     0.30   0.765    -.1073869    .1447447
+   _IstaXyear_88 |   .0666298   .1058414     0.63   0.534    -.1492351    .2824947
+   _IstaXyear_89 |  -.0383595   .0679259    -0.56   0.576    -.1768952    .1001762
+   _IstaXyear_90 |   .0379786   .0772364     0.49   0.626    -.1195461    .1955032
+   _IstaXyear_91 |  -.0002559   .0902758    -0.00   0.998    -.1843747    .1838628
+   _IstaXyear_92 |  -.0843367   .0880179    -0.96   0.345    -.2638504    .0951771
+   _IstaXyear_93 |  -.0515396   .0801085    -0.64   0.525     -.214922    .1118429
+   _IstaXyear_94 |  -.0060832     .11554    -0.05   0.958    -.2417286    .2295621
+   _IstaXyear_95 |  -.0475624   .1236805    -0.38   0.703    -.2998104    .2046856
+   _IstaXyear_96 |  -.0200229   .1766085    -0.11   0.910    -.3802183    .3401726
+         treated |  -3.525593   .0623026   -56.59   0.000     -3.65266   -3.398526
+treatedxpost1937 |  -.5106644   .1282841    -3.98   0.000    -.7723016   -.2490271
+    treatedxyear |   .0074205   .0085987     0.86   0.395    -.0101165    .0249576
+ treatxpostxyear |  -.1457085   .0368659    -3.95   0.000    -.2208971   -.0705199
+           _cons |  -7.726635   .4459571   -17.33   0.000     -8.63617     -6.8171
+----------------------------------------------------------------------------------
+
+. 
+. eststo
+(est6 stored)
+
+. 
+end of do-file
+
+. esttab using "rt4_C.tex"
+(output written to rt4_C.tex)
+
+. exit, clear

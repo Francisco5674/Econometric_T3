@@ -1,0 +1,25 @@
+{
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\begin{tabular}{l*{4}{c}}
+\hline\hline
+            &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}&\multicolumn{1}{c}{(3)}&\multicolumn{1}{c}{(4)}\\
+            &\multicolumn{1}{c}{logall\_tot}&\multicolumn{1}{c}{logall\_tot}&\multicolumn{1}{c}{logtuber}&\multicolumn{1}{c}{logtuber}\\
+\hline
+year1937    &     -0.0139\sym{***}&     -0.0120\sym{***}&     -0.0469\sym{***}&     -0.0479\sym{***}\\
+            &     (-6.38)         &     (-5.02)         &    (-22.09)         &    (-18.87)         \\
+[1em]
+post1937    &     -0.0244         &    -0.00747         &      0.0151         &     0.00641         \\
+            &     (-1.06)         &     (-0.39)         &      (0.60)         &      (0.29)         \\
+[1em]
+yearpost1937&                     &     -0.0117\sym{*}  &                     &     0.00605         \\
+            &                     &     (-2.47)         &                     &      (1.03)         \\
+[1em]
+\_cons      &       7.035\sym{***}&       7.048\sym{***}&       3.963\sym{***}&       3.957\sym{***}\\
+            &    (382.51)         &    (341.33)         &    (215.64)         &    (196.26)         \\
+\hline
+\(N\)       &          19         &          19         &          19         &          19         \\
+\hline\hline
+\multicolumn{5}{l}{\footnotesize \textit{t} statistics in parentheses}\\
+\multicolumn{5}{l}{\footnotesize \sym{*} \(p<0.05\), \sym{**} \(p<0.01\), \sym{***} \(p<0.001\)}\\
+\end{tabular}
+}

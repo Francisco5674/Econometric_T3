@@ -1,0 +1,31 @@
+{
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\begin{tabular}{l*{6}{c}}
+\hline\hline
+            &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}&\multicolumn{1}{c}{(3)}&\multicolumn{1}{c}{(4)}&\multicolumn{1}{c}{(5)}&\multicolumn{1}{c}{(6)}\\
+            &\multicolumn{1}{c}{pog20s}&\multicolumn{1}{c}{pog20s}&\multicolumn{1}{c}{pcNSDAP285}&\multicolumn{1}{c}{pcNSDAP285}&\multicolumn{1}{c}{clubs\_all\_pc}&\multicolumn{1}{c}{clubs\_all\_pc}\\
+\hline
+pog1349     &       0.216\sym{**} &                     &       1.969\sym{*}  &                     &       0.109         &                     \\
+            &      (2.91)         &                     &      (2.05)         &                     &      (0.27)         &                     \\
+[1em]
+lnpop       &      0.0544         &                     &       0.354         &                     &      -0.538\sym{***}&                     \\
+            &      (1.44)         &                     &      (1.07)         &                     &     (-7.33)         &                     \\
+[1em]
+share\_cath25&      -0.155         &                     &      -2.031         &                     &      -0.259         &                     \\
+            &     (-1.15)         &                     &     (-1.19)         &                     &     (-0.67)         &                     \\
+[1em]
+bcollar25   &      -0.381         &                     &      -13.06\sym{*}  &                     &      -3.422\sym{*}  &                     \\
+            &     (-0.74)         &                     &     (-2.39)         &                     &     (-2.37)         &                     \\
+[1em]
+SATT        &                     &       0.175\sym{***}&                     &       1.845\sym{**} &                     &      -0.225         \\
+            &                     &      (4.41)         &                     &      (2.98)         &                     &     (-0.41)         \\
+[1em]
+\_cons      &      -0.397         &                     &       4.458         &                     &       9.333\sym{***}&                     \\
+            &     (-0.94)         &                     &      (1.28)         &                     &     (10.47)         &                     \\
+\hline
+\(N\)       &          91         &          91         &          92         &          92         &          92         &          92         \\
+\hline\hline
+\multicolumn{7}{l}{\footnotesize \textit{t} statistics in parentheses}\\
+\multicolumn{7}{l}{\footnotesize \sym{*} \(p<0.05\), \sym{**} \(p<0.01\), \sym{***} \(p<0.001\)}\\
+\end{tabular}
+}

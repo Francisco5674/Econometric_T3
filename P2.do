@@ -20,19 +20,69 @@ gen logheart = ln(heart_total)
 gen logdiab_trunc = logdiab
 replace logdiab_trunc = . if logdiab < 2.71
 
-twoway connected logall_tot year
+twoway connected logall_tot year, xline(1937)
 
-quietly twoway connected logmmr year, saving(mmr_gr)
-quietly twoway connected loginpn year, saving(inpn_gr)
-quietly twoway connected logscar year, saving(scar_gr)
-quietly twoway connected logmeni year, saving(meni_gr)
+quietly twoway connected logmmr year, xline(1937) saving(mmr_gr)
+quietly twoway connected loginpn year, xline(1937) saving(inpn_gr)
+quietly twoway connected logscar year, xline(1937) saving(scar_gr)
+quietly twoway connected logmeni year, xline(1937) saving(meni_gr)
 
 gr combine mmr_gr.gph inpn_gr.gph scar_gr.gph meni_gr.gph
 
-twoway connected logtuber year
+twoway connected logtuber year, xline(1937)
 
 twoway connected logcancer logheart year, yaxis(1) || connected logdiab_trunc year, yaxis(2)
 
+******** Table 2 *******************
+keep if year>=1920 & year<=1950
+
+log using Table2_results.log, replace
+cap prog drop breaks
+prog breaks
+  args var
+	cap drop break 
+	cap drop sig 
+	cap drop fstat 
+	cap drop maxf
+	
+gen sig=.
+gen fstat=.
+tsset year
+
+*test break
+local i=33
+while `i'<=42 {
+cap drop y19`i' 
+qui gen y19`i'=(year>=19`i')
+qui newey d.`var' y19`i', lag(2)
+qui replace fstat=e(F) if year==19`i'
+qui test y19`i' 
+qui replace sig=r(p) if year==19`i'
+local i=`i' +1
+}
+qui egen maxf=max(fstat) 
+qui gen break=year if fstat==maxf
+list `var' year break fstat sig if break!=.
+
+end
+breaks logall_tot
+breaks logmmr
+breaks loginpn
+breaks logscar
+breaks logtuber
+
+log close
+
+************************************
+
+****************** parallel tendencies *********************
+quietly twoway connected logtuber logmmr year, xline(1937) saving(tmmr_gr)
+quietly twoway connected logtuber loginpn year, xline(1937) saving(tinpn_gr)
+quietly twoway connected logtuber logscar year, xline(1937) saving(tscar_gr)
+
+gr combine tmmr_gr.gph tinpn_gr.gph tscar_gr.gph 
+
+************************************************************
 * d)
 
 sort year
@@ -118,15 +168,27 @@ egen diseaseyear=group(disease year1937)
 
 xi: areg logmortality year1937 treated treatedxpost1937 treatedxyear if disease == 1|disease == 2, absorb(stapost1937) cluster(diseaseyear)
 
+eststo
+
 xi: reg logmortality i.stapost1937*year1937 treated treatedxpost1937 treatedxyear treatxpostxyear if disease == 1|disease == 2, cluster(diseaseyear)
+
+eststo
 
 xi: areg logmortality year1937 treated treatedxpost1937 treatedxyear if disease == 1|disease == 4, absorb(stapost1937) cluster(diseaseyear)
 
+eststo
+
 xi: reg logmortality i.stapost1937*year1937 treated treatedxpost1937 treatedxyear treatxpostxyear if disease == 1|disease == 4, cluster(diseaseyear)
+
+eststo
 
 xi: areg logmortality year1937 treated treatedxpost1937 treatedxyear if disease == 1|disease == 3, absorb(stapost1937) cluster(diseaseyear)
 
+eststo
+
 xi: reg logmortality i.stapost1937*year1937 treated treatedxpost1937 treatedxyear treatxpostxyear if disease == 1|disease == 3, cluster(diseaseyear)
+
+eststo
 
 ** Panel C
 
@@ -160,15 +222,116 @@ egen diseaseyear=group(disease year1937)
 
 xi: areg logmortality year1937 treated treatedxpost1937 treatedxyear if disease == 1|disease == 2, absorb(stapost1937) cluster(diseaseyear)
 
+eststo
+
 xi: reg logmortality i.stapost1937*year1937 treated treatedxpost1937 treatedxyear treatxpostxyear if disease == 1|disease == 2, cluster(diseaseyear)
+
+eststo
 
 xi: areg logmortality year1937 treated treatedxpost1937 treatedxyear if disease == 1|disease == 4, absorb(stapost1937) cluster(diseaseyear)
 
+eststo
+
 xi: reg logmortality i.stapost1937*year1937 treated treatedxpost1937 treatedxyear treatxpostxyear if disease == 1|disease == 4, cluster(diseaseyear)
+
+eststo
 
 xi: areg logmortality year1937 treated treatedxpost1937 treatedxyear if disease == 1|disease == 3, absorb(stapost1937) cluster(diseaseyear)
 
+eststo
+
 xi: reg logmortality i.stapost1937*year1937 treated treatedxpost1937 treatedxyear treatxpostxyear if disease == 1|disease == 3, cluster(diseaseyear)
+
+eststo
+
+*  Real f)
+
+use "state_race_data.dta", clear
+keep state statenum year race mmr flupneu_rate sf_rate tb_rate
+rename mmr d1
+rename flupneu_rate d2
+rename sf_rate d3
+rename tb_rate d4
+reshape long d, i(statenum year race) j(disease) 
+label define disease 1"mmr" 2"influ_pneumonia" 3"scarlet_fever" 4"tb" 
+label values disease disease
+rename d m_rate
+gen lnm_rate=ln(m_rate)
+gen treated=(disease<4)
+drop if year<1925|year>1943
+gen post37=(year>=1937)
+gen black=(race=="other")
+gen year_c=year-1937
+gen treatedXyear_c=treated*year_c
+gen treatedXpost37=treated*post37
+gen treatedXblack=treated*black
+gen treatedXyear_cXpost37=treated*year_c*post37
+gen treatedXyear_cXblack=treated*year_c*black
+gen treatedXyear_cXpost37Xblack=treated*year_c*post37*black
+gen treatedXpost37Xblack=treated*post37*black
+gen year_cXblack=year_c*black
+gen year_cXpost37=year_c*post37
+gen blackXyear_cXpost37=black*year*post37
+egen statepost = group (state post37)
+egen blackstatepost = group(black statepost)
+xi i.statepost*year
+egen diseaseyear=group(disease year)
+
+*/ Flag states to drop in scarlet fever model due to several state/year observations with zero mortality for blacks */
+gen dropstate=(disease==3&(statenum==3|statenum==7|statenum==8|statenum==16|statenum==38|statenum==46))
+
+* Panel A results - Whites only 
+
+xi: areg lnm_rate treatedXyear_c treatedXpost37 treated year_c if race=="white"  & (disease==1|disease==4), absorb(statepost) cluster(diseaseyear)
+eststo
+xi: reg lnm_rate treatedXyear_cXpost37 treatedXyear_c treatedXpost37 treated i.statepost*year  if race=="white" & (disease==1|disease==4), cluster(diseaseyear)
+eststo
+xi: areg lnm_rate treatedXyear_c treatedXpost37 treated year_c if race=="white" & (disease==2|disease==4), absorb(statepost) cluster(diseaseyear)
+eststo
+xi: reg lnm_rate treatedXyear_cXpost37 treatedXyear_c treatedXpost37 treated i.statepost*year  if race=="white" & (disease==2|disease==4), cluster(diseaseyear)
+eststo
+xi: areg lnm_rate treatedXyear_c treatedXpost37 treated year_c if race=="white" & dropstate==0&(disease==3|disease==4), absorb(statepost) cluster(diseaseyear)
+eststo
+xi: reg lnm_rate treatedXyear_cXpost37 treatedXyear_c treatedXpost37 treated i.statepost*year  if race=="white" & dropstate==0 & (disease==3|disease==4), cluster(diseaseyear)
+eststo
+
+* Panel B results - Blacks only
+
+xi: areg lnm_rate treatedXyear_c treatedXpost37 treated year_c if race=="other" & (disease==1|disease==4), absorb(statepost)  cluster(diseaseyear)
+eststo
+xi: reg lnm_rate treatedXyear_cXpost37 treatedXyear_c treatedXpost37 treated i.statepost*year if race=="other" & (disease==1|disease==4), cluster(diseaseyear)
+eststo
+xi: areg lnm_rate treatedXyear_c treatedXpost37 treated year_c if race=="other" & (disease==2|disease==4), absorb(statepost)  cluster(diseaseyear)
+eststo
+xi: reg lnm_rate treatedXyear_cXpost37 treatedXyear_c treatedXpost37 treated i.statepost*year if race=="other" & (disease==2|disease==4),  cluster(diseaseyear)
+eststo
+xi: areg lnm_rate treatedXyear_c treatedXpost37 treated year_c if race=="other"& dropstate==0 & (disease==3|disease==4), absorb(statepost) cluster(diseaseyear)
+eststo
+xi: reg lnm_rate treatedXyear_cXpost37 treatedXyear_c treatedXpost37 treated i.statepost*year if race=="other" & dropstate==0& (disease==3|disease==4),  cluster(diseaseyear)
+eststo
+
+
+* Panel C results - Fully interacted models 
+
+areg lnm_rate treatedXyear_cXblack treatedXpost37Xblack treatedXblack treatedXpost37 year_cXblack treatedXyear_c treated year_c ///
+if disease==1|disease==4, absorb(blackstatepost)  cluster(diseaseyear)
+eststo
+xi: reg lnm_rate treatedXyear_cXpost37Xblack treatedXyear_cXblack treatedXpost37Xblack treatedXblack blackXyear_cXpost37 treatedXyear_cXpost37 ///
+treatedXpost37 treatedXyear_c treated i.blackstatepost*year if disease==1|disease==4, cluster(diseaseyear)
+eststo
+areg lnm_rate treatedXyear_cXblack treatedXpost37Xblack treatedXblack treatedXpost37 year_cXblack treatedXyear_c treated year_c ///
+if disease==2|disease==4, absorb(blackstatepost)  cluster(diseaseyear)
+eststo
+xi: reg lnm_rate treatedXyear_cXpost37Xblack treatedXyear_cXblack treatedXpost37Xblack treatedXblack blackXyear_cXpost37 treatedXyear_cXpost37 ///
+treatedXpost37 treatedXyear_c treated i.blackstatepost*year if disease==2|disease==4,  cluster(diseaseyear)
+eststo
+xi: areg lnm_rate treatedXyear_cXblack treatedXpost37Xblack treatedXblack treatedXpost37 year_cXblack treatedXyear_c treated year_c ///
+if (disease==3|disease==4) & dropstate==0 , absorb(blackstatepost)  cluster(diseaseyear)
+eststo
+xi: reg lnm_rate treatedXyear_cXpost37Xblack treatedXyear_cXblack treatedXpost37Xblack treatedXblack blackXyear_cXpost37 treatedXyear_cXpost37 ///
+treatedXpost37 treatedXyear_c treated i.blackstatepost*year if (disease==3|disease==4 ) & dropstate==0 ,  cluster(diseaseyear)
+eststo
+
 
 * f)
 clear all
